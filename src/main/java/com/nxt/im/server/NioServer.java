@@ -23,8 +23,15 @@ import java.util.Set;
  */
 public class NioServer {
   private InetSocketAddress inetSocketAddress;
-  // private Selector selector;
-  // private ServerSocketChannel serverSocketChannel;
+  /**
+   * selector
+   */
+  private Selector selector;
+
+  /**
+   * socket
+   */
+  private ServerSocketChannel serverSocketChannel;
 
   public NioServer(int port) {
     inetSocketAddress = new InetSocketAddress(port);
@@ -38,6 +45,96 @@ public class NioServer {
     return Charset.forName("UTF-8").encode(str);
   }
 
+  /**
+   * 初始化服务
+   */
+  public void open() throws IOException {
+    /**
+     * 创建一个selector
+     */
+    selector = Selector.open();
+    /**
+     * 通过serversocketchannel 创建channel通道
+     */
+    serverSocketChannel = ServerSocketChannel.open();
+
+    /**
+     * 为channel 通道绑定监听端口
+     */
+    serverSocketChannel.bind(inetSocketAddress);
+
+    /**
+     * 设置channel为非阻塞模式
+     */
+    serverSocketChannel.configureBlocking(false);
+
+    /**
+     * 将channel 注册到selector上，监听连接事件
+     */
+    serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+  }
+
+  public void listen() {
+
+    /**
+     * 服务器启动成功
+     */
+    while (true) {
+      /**
+       * TODO: 获取可用channel数量
+       */
+      int readyChannels = 0;
+      try {
+        readyChannels = selector.select();
+      } catch (IOException ioE) {
+        ioE.printStackTrace();
+        break;
+      }
+
+      if (readyChannels == 0) {
+        continue;
+      }
+
+      /**
+       * 获取所有可用channel的集合
+       */
+      Set<SelectionKey> selectionKeys = selector.selectedKeys();
+
+      Iterator<SelectionKey> iterator = selectionKeys.iterator();
+
+      while (iterator.hasNext()) {
+        /**
+         * selectionKey实例
+         */
+        SelectionKey selectionKey = iterator.next();
+
+        /**
+         * [!] 移除set中的当前的selectionKey
+         */
+        iterator.remove();
+
+        /**
+         * 根据就绪状态来判断相应的逻辑
+         */
+        if (selectionKey.isAcceptable()) {
+          try {
+            acceptHandler(serverSocketChannel, selector);
+          } catch (IOException ioE) {
+            ioE.printStackTrace();
+            break;
+          }
+        } else if (selectionKey.isReadable()) {
+          readHandler(selectionKey, selector);
+        }
+      }
+    }
+  }
+
+  /**
+   * 
+   * @throws IOException
+   */
+  @Deprecated
   public void start() throws IOException {
     /**
      * 创建一个selector
