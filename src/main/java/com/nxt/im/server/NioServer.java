@@ -18,6 +18,9 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.nxt.im.common.Accounts;
+import com.nxt.im.common.DataByteBuffer;
+
 /**
  * 关键类： Channels ServerSocketCHannel, Selector, SelectorKey
  */
@@ -72,6 +75,8 @@ public class NioServer {
      * 将channel 注册到selector上，监听连接事件
      */
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+    System.out.println("Server running at " + inetSocketAddress.getAddress() + ":" + inetSocketAddress.getPort());
   }
 
   public void listen() {
@@ -240,25 +245,39 @@ public class NioServer {
     /**
      * 循环读取客户端请求信息
      */
-    String request = "";
+    // String request = "";
+    // try {
+
+    // while (socketChannel.read(byteBuffer) > 0) {
+    // /**
+    // * 切换buffer为读模式
+    // */
+    // byteBuffer.flip();
+
+    // /**
+    // * 读取buffer中的内容
+    // */
+    // request += Charset.forName("UTF-8").decode(byteBuffer);
+    // }
+    // } catch (IOException ioe) {
+    // ioe.printStackTrace();
+    // return;
+    // }
+
     try {
+      socketChannel.read(byteBuffer);
 
-      while (socketChannel.read(byteBuffer) > 0) {
-        /**
-         * 切换buffer为读模式
-         */
-        byteBuffer.flip();
+      DataByteBuffer dataByteBuffer = new DataByteBuffer(byteBuffer);
+      System.out.println(dataByteBuffer.getUrl());
+      Accounts account = (Accounts) dataByteBuffer.getData();
+      System.out.println(account.getSignature());
+    } catch (IOException ioE) {
+      // ioE.printStackTrace();
+      // return;
+    } catch (ClassNotFoundException cnfE) {
+      // cnfE.printStackTrace();
+      // return;
 
-        /**
-         * 读取buffer中的内容
-         */
-
-        request += Charset.forName("UTF-8").decode(byteBuffer);
-
-      }
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-      return;
     }
 
     /**
@@ -275,11 +294,11 @@ public class NioServer {
     /**
      * 将客户端发送的请求信息，广播给其他客户端
      */
-    if (request.length() > 0) {
-      // 广播给其他客户端
-      System.out.println("::" + request);
-      this.broadcast(selector, socketChannel, request);
-    }
+    // if (request.length() > 0) {
+    // // 广播给其他客户端
+    // System.out.println("::" + request);
+    // this.broadcast(selector, socketChannel, request);
+    // }
 
   }
 

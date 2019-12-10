@@ -3,7 +3,7 @@ package com.nxt.im.ui;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import com.nxt.im.db.Accounts;
+import com.nxt.im.common.Accounts;
 
 public class Register extends JFrame {
   private Accounts account;

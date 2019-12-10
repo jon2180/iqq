@@ -28,7 +28,7 @@ public class ResponseHandler implements Runnable {
   public void run() {
     try {
       /**
-       * 循环等待新连接
+       * 循环等待新消息
        */
 
       while (true) {

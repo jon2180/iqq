@@ -1,4 +1,4 @@
-package com.nxt.im.db;
+package com.nxt.im.common;
 
 import java.io.Serializable;
 
