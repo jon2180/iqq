@@ -8,19 +8,25 @@ import com.nxt.im.common.DataByteBuffer;
 public class Register {
 
   public static void main(String[] args) {
-    new Register();
+    try {
+      new Register().lisent();
+    } catch (IOException ioE) {
+      ioE.printStackTrace();
+    }
   }
   // private Accounts account;
 
   public void lisent() throws IOException {
     try {
       Client client = new Client();
+      client.init();
+
       Accounts account = new Accounts();
+      account.setNickname("my");
       account.setEmail("763653451@qq.com");
-      account.setNickname("slience");
       account.setSignature("this is a signature");
 
-      DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/name", account);
+      DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/reg", account);
       client.send(dataByteBuffer.toByteBuffer());
       // send(new DataByteBuffer("/user/name", account).toByteBuffer());
 
@@ -46,29 +52,6 @@ public class Register {
   }
 
   public Register() {
-
-    try {
-      Accounts account = new Accounts();
-      account.setEmail("763653451@qq.com");
-      account.setNickname("slience");
-      account.setSignature("this is a signature");
-
-      DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/name", account);
-      DataByteBuffer buffer = new DataByteBuffer(dataByteBuffer.toByteBuffer());
-
-      System.out.println(buffer.getUrl());
-      Accounts trans = (Accounts) buffer.getData();
-
-      // ByteBuffer byteBuffer = DataByteBuffer.objectToByteBuffer(account);
-      // Accounts trans = (Accounts) DataByteBuffer.byteBufferToObject(byteBuffer);
-      System.out.println(trans.getSignature());
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-      return;
-    } catch (ClassNotFoundException cnfE) {
-      cnfE.printStackTrace();
-      return;
-    }
   }
 
 }

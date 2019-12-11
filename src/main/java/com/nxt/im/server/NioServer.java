@@ -16,13 +16,15 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Set;
 
-import com.nxt.im.common.Accounts;
 import com.nxt.im.common.DataByteBuffer;
 
 /**
- * 关键类： Channels ServerSocketCHannel, Selector, SelectorKey
+ * 初始化服务 关键类：Channels ServerSocketCHannel,Selector,SelectorKey
+ * 
+ * @version 191211
  */
 public class NioServer {
   private InetSocketAddress inetSocketAddress;
@@ -31,27 +33,16 @@ public class NioServer {
    */
   private Selector selector;
 
+  private HashMap<Integer, SelectionKey> socketMap;
   /**
    * socket
    */
   private ServerSocketChannel serverSocketChannel;
 
-  public NioServer(int port) {
+  public NioServer(int port) throws IOException {
     inetSocketAddress = new InetSocketAddress(port);
-  }
+    socketMap = new HashMap<Integer, SelectionKey>();
 
-  public NioServer() {
-    this(8000);
-  }
-
-  public ByteBuffer encode(String str) {
-    return Charset.forName("UTF-8").encode(str);
-  }
-
-  /**
-   * 初始化服务
-   */
-  public void open() throws IOException {
     /**
      * 创建一个selector
      */
@@ -77,6 +68,14 @@ public class NioServer {
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
     System.out.println("Server running at " + inetSocketAddress.getAddress() + ":" + inetSocketAddress.getPort());
+  }
+
+  public NioServer() throws IOException {
+    this(8000);
+  }
+
+  public ByteBuffer encode(String str) {
+    return Charset.forName("UTF-8").encode(str);
   }
 
   public void listen() {
@@ -136,77 +135,10 @@ public class NioServer {
   }
 
   /**
-   * 
-   * @throws IOException
+   * @return the socketMap
    */
-  @Deprecated
-  public void start() throws IOException {
-    /**
-     * 创建一个selector
-     */
-    Selector selector = Selector.open();
-    /**
-     * 通过serversocketchannel 创建channel通道
-     */
-    ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-
-    /**
-     * 为channel 通道绑定监听端口
-     */
-    serverSocketChannel.bind(inetSocketAddress);
-
-    /**
-     * 设置channel为非阻塞模式
-     */
-    serverSocketChannel.configureBlocking(false);
-
-    /**
-     * 将channel 注册到selector上，监听连接事件
-     */
-    serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
-    /**
-     * 服务器启动成功
-     */
-
-    while (true) {
-      /**
-       * TODO: 获取可用channel数量
-       */
-      int readyChannels = selector.select();
-
-      if (readyChannels == 0) {
-        continue;
-      }
-      /**
-       * 获取所有可用channel的集合
-       */
-      Set<SelectionKey> selectionKeys = selector.selectedKeys();
-
-      Iterator<SelectionKey> iterator = selectionKeys.iterator();
-
-      while (iterator.hasNext()) {
-        /**
-         * selectionKey实例
-         */
-        SelectionKey selectionKey = iterator.next();
-
-        /**
-         * [!] 移除set中的当前的selectionKey
-         */
-        iterator.remove();
-
-        /**
-         * 根据就绪状态来判断相应的逻辑
-         */
-        if (selectionKey.isAcceptable()) {
-          acceptHandler(serverSocketChannel, selector);
-        } else if (selectionKey.isReadable()) {
-          readHandler(selectionKey, selector);
-        }
-
-      }
-    }
+  public HashMap<Integer, SelectionKey> getSocketMap() {
+    return socketMap;
   }
 
   public void acceptHandler(ServerSocketChannel serverSocketChannel, Selector selector) throws IOException {
@@ -218,19 +150,28 @@ public class NioServer {
     /**
      * 将socketChannel设置为非阻塞工作模式
      */
-
     socketChannel.configureBlocking(false);
+
     /**
      * 将channel注册到selector上，监听可读事件
      */
     socketChannel.register(selector, SelectionKey.OP_READ);
-
+    // SelectionKey selectionKey = socketChannel.register(selector,
+    // SelectionKey.OP_READ);
+    // socketMap.put("123", selectionKey);
+ 
     /**
      * 回复客户端提示信息
      */
     socketChannel.write(encode("请注意隐私安全"));
   }
 
+  /**
+   * 处理可读事件
+   * 
+   * @param selectionKey
+   * @param selector
+   */
   public void readHandler(SelectionKey selectionKey, Selector selector) {
     /**
      * 要从selectionKey中获取到已经就绪的channel
@@ -242,85 +183,26 @@ public class NioServer {
      */
     ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 
-    /**
-     * 循环读取客户端请求信息
-     */
-    // String request = "";
-    // try {
-
-    // while (socketChannel.read(byteBuffer) > 0) {
-    // /**
-    // * 切换buffer为读模式
-    // */
-    // byteBuffer.flip();
-
-    // /**
-    // * 读取buffer中的内容
-    // */
-    // request += Charset.forName("UTF-8").decode(byteBuffer);
-    // }
-    // } catch (IOException ioe) {
-    // ioe.printStackTrace();
-    // return;
-    // }
-
     try {
       socketChannel.read(byteBuffer);
+      Router.dispatch(socketChannel,  new DataByteBuffer(byteBuffer));
 
-      DataByteBuffer dataByteBuffer = new DataByteBuffer(byteBuffer);
-      System.out.println(dataByteBuffer.getUrl());
-      Accounts account = (Accounts) dataByteBuffer.getData();
-      System.out.println(account.getSignature());
     } catch (IOException ioE) {
       // ioE.printStackTrace();
       // return;
     } catch (ClassNotFoundException cnfE) {
-      // cnfE.printStackTrace();
+      cnfE.printStackTrace();
       // return;
-
     }
 
     /**
      * 将channel再次注册到selector上，监听它的可读事件
      */
     try {
-
       socketChannel.register(selector, SelectionKey.OP_READ);
     } catch (ClosedChannelException cce) {
       cce.printStackTrace();
       return;
     }
-
-    /**
-     * 将客户端发送的请求信息，广播给其他客户端
-     */
-    // if (request.length() > 0) {
-    // // 广播给其他客户端
-    // System.out.println("::" + request);
-    // this.broadcast(selector, socketChannel, request);
-    // }
-
   }
-
-  private void broadcast(Selector selector, SocketChannel socketChannel, String request) {
-    /**
-     * 获取所有已介入的客户端channel
-     */
-    Set<SelectionKey> selectionKeys = selector.keys();
-
-    selectionKeys.forEach(selectionKey -> {
-      Channel targetChannel = selectionKey.channel();
-
-      // 剔除发消息的客户端
-      if (targetChannel instanceof SocketChannel && targetChannel != socketChannel) {
-        try {
-          ((SocketChannel) targetChannel).write(Charset.forName("UTF-8").encode(request));
-
-        } catch (IOException ioe) {
-          ioe.printStackTrace();
-        }
-      }
-    });
-  }
-
 }

@@ -15,10 +15,10 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-import java.util.Scanner;
+// import java.util.Scanner;
 
-import com.nxt.im.common.Accounts;
-import com.nxt.im.common.DataByteBuffer;
+// import com.nxt.im.common.Accounts;
+// import com.nxt.im.common.DataByteBuffer;
 
 // import com.nxt.im.common.Accounts;
 
@@ -32,17 +32,6 @@ public class Client {
   private InetSocketAddress inetSocketAddress;
   private Selector selector;
   private SocketChannel socketChannel;
-
-  public static void main(String[] args) {
-    try {
-      Client client = new Client();
-
-      client.init();
-      // client.lisent();
-    } catch (IOException ioE) {
-      ioE.printStackTrace();
-    }
-  }
 
   public void init() throws IOException {
     inetSocketAddress = new InetSocketAddress("127.0.0.1", 8000);
