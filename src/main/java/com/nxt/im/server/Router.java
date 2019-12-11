@@ -58,6 +58,8 @@ public class Router {
         // try {
         socketChannel.write(Message.encode("不能使用这个昵称"));
         // }
+      } else {
+        sql = "insert into accounts (nickname, signature, )";
       }
       // while (resultSet.next()) {
       // int id = resultSet.getInt("id");
