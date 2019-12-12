@@ -101,7 +101,7 @@ public class RegisterFrame extends JFrame{//类名 loginFrame
 
     }
     // 测试
-    // public static void main(String[] args) {
-    //     new RegisterFrame();
-    // }
+    public static void main(String[] args) {
+        new RegisterFrame();
+    }
 }

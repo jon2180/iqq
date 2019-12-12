@@ -22,8 +22,9 @@ public class Register {
       client.init();
 
       Accounts account = new Accounts();
-      account.setNickname("my");
+      account.setNickname("youyou");
       account.setEmail("763653451@qq.com");
+      account.setPassword("123456");
       account.setSignature("this is a signature");
 
       DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/reg", account);

@@ -59,6 +59,10 @@ public class Router {
         socketChannel.write(Message.encode("不能使用这个昵称"));
         // }
       } else {
+        String password = account.getPassword();
+
+        
+
         sql = "insert into accounts (nickname, signature, )";
       }
       // while (resultSet.next()) {
