@@ -24,7 +24,7 @@ public class DatabaseConnection {
     String driver = "com.mysql.cj.jdbc.Driver";
 
     String dbUrl = "jdbc:mysql://" + Database.IP + ":" + Database.PORT + "/" + Database.TABLE_NAME
-        + "?useUnicode=true&characterEncoding=UTF-8";
+        + "?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
 
     try {
       Class.forName(driver);
