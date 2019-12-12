@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.*; 
 
 public class LoginFrame extends JFrame{//类名 loginFrame
     
@@ -93,14 +93,13 @@ public class LoginFrame extends JFrame{//类名 loginFrame
         ActionListener lacan = new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                username.setText("");
                 password.setText("");
+                username.setText("");
 			}
 		};
 		//把监听器注册到控件上
 		cancelbtn.addActionListener(lacan);
 		setSize(900,600);
-
 
     }
 }

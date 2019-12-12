@@ -38,6 +38,6 @@ public final class App {
      */
     public static void main(String[] args) {
         new LoginFrame();
-        System.out.println("Hello World!");
+        System.out.println("Create LoginFrame!");
     }
 }
