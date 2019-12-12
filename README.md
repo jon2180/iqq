@@ -2,14 +2,35 @@
 
 ## Changelog更改日志
 
+> 较新的在上面
+
+### 191212
+
+- 增加登录和注册窗体类，运行App可成功创建
+  > @...
+- 更新一些文档
+  > [文件结构](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)
+  > [服务端类之间的调用关系](#%e6%9c%8d%e5%8a%a1%e7%ab%af%e7%b1%bb%e9%97%b4%e8%b0%83%e7%94%a8%e5%85%b3%e7%b3%bb)
+  > @author jon2180
+
+### 191211
+
+- 设置路由的分发类(com.nxt.im.server.Router) 
+  > 主要功能是分发用户的不同请求给相应的处理方法，结构有待优化\
+  > @author jon2180
+- 设置socket的包装器类 (com.nxt.im.server.SocketWrapper) 
+  > 主要功能是用于作为 HashMap 的值，方便找到该用户所连接的SocketChannel对象，结构有待优化\
+  > @author jon2180
+- 连接上了数据库
+  > [建表Sql](./sql/v191208.1.sql)\
+  > [数据库连接配置](./src/main/java/com/nxt/im/config/Database.java)\
+  > @author jon2180
+
 ### 191210
 
 - 设计并部分实现了前后端的通信方式，请看 [C/S通信方式](#cs-%e9%80%9a%e4%bf%a1%e6%96%b9%e5%bc%8f)
 - 新增了几个bug😂，逻辑只是展现了思路，并没有完善
 
-### 191212
-
-- 增加登录和注册窗体类，运行App可成功创建
 
 ## 一、概述
 
@@ -113,4 +134,36 @@ try {
   // return;
 
 }
+```
+
+
+
+
+### 目录结构
+
+```bash
+sql/    # 数据库文件
+res/    # 资源文件
+src/    # 代码与测试代码源文件
+  main/java/com/nxt/im/  # 主包
+    client/              # 客户端的核心，客户端独有，客户端与后端交互的代码应该放在这里
+    common/              # 客户端服务器共用，例如交互用到的序列化的类
+    config/              # 配置，这个我也还没搞清楚需要放哪些
+    db/                  # 数据库相关，服务端独有
+    server/              # 服务端独有，服务器核心逻辑
+    ui/                  # 界面相关，客户端独有
+  test/java/com/nxt/im/  # 单元测试
+```
+
+### 服务端类间调用关系
+
+```
+NioServer 主入口
+  - 开启服务器就监听来自客户端的事件
+  - 碰到可读事件，读取到byteBuffer类型的消息
+    - 【调用了Router.dispatch()方法】把事件及数据发送给 Router
+      - Router 判断事件类型，在数据转发给位于Router类内的相应的处理方法
+        - 碰到登录成功的事件，就把当前用户的id作为键，特定的SocketWrapper对象作为值放到 HashMap（目前位于NioServer） 中,具体处理方式有待商榷
+        - 碰到断开连接事件或退出登录事件，就在HashMap中移除掉此id对应的项目
+      - 在 Router 类的各个方法中，可能会调用到数据库的相关类
 ```
