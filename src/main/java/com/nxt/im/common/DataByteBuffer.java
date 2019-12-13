@@ -20,23 +20,52 @@ public class DataByteBuffer implements Serializable {
 
   private Serializable data;
 
+  private String type = "serial-data";
+
   public DataByteBuffer(ByteBuffer byteBuffer) throws IOException, ClassNotFoundException {
     DataByteBuffer dataByteBuffer = (DataByteBuffer) DataByteBuffer.byteBufferToObject(byteBuffer);
     this.url = dataByteBuffer.url;
     this.data = dataByteBuffer.data;
+    this.type = dataByteBuffer.type;
   }
 
   public DataByteBuffer(String url, Serializable data) {
     this.url = url;
     this.data = data;
+    this.type = "serial-data";
+  }
+
+  public DataByteBuffer() {
+
+  }
+
+  /**
+   * @param url the url to set
+   */
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   public String getUrl() {
     return url;
   }
 
+  /**
+   * @param type the type to set
+   */
+  public void setType(String type) {
+    this.type = type;
+  }
+
   public Serializable getData() {
     return data;
+  }
+
+  /**
+   * @param data the data to set
+   */
+  public void setData(Serializable data) {
+    this.data = data;
   }
 
   public ByteBuffer toByteBuffer() throws IOException {

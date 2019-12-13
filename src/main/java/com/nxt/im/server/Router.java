@@ -1,6 +1,7 @@
 package com.nxt.im.server;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,59 +28,64 @@ public class Router {
 
   }
 
-  public static void dispatch(SocketChannel socketChannel, DataByteBuffer dataByteBuffer) {
-    String url = dataByteBuffer.getUrl();
+  public static void dispatch(SocketChannel socketChannel, ByteBuffer byteBuffer) {
 
-    System.out.println(url);
+    DataByteBuffer dataByteBuffer;
 
-    switch (url) {
-    case "/user/reg":
-      registerUser(socketChannel, (Accounts) dataByteBuffer.getData());
+    try {
+      dataByteBuffer = new DataByteBuffer(byteBuffer);
+      String url = dataByteBuffer.getUrl();
+
+      System.out.println(url);
+
+      switch (url) {
+      case "/user/reg":
+        registerUser(socketChannel, (Accounts) dataByteBuffer.getData());
+        break;
+
+      case "/user/log":
+        break;
+
+      default:
+
+      }
+    } catch (ClassNotFoundException | IOException e) {
+      e.printStackTrace();
     }
-
-    // Accounts account = (Accounts) dataByteBuffer.getData();
-    // System.out.println(account.getSignature());
   }
 
   private static void registerUser(SocketChannel socketChannel, Accounts account) {
-
-    String sql = "select count(nickname) as count from accounts where nickname=\'" + account.getNickname() + "\'";
-
-    ResultSet resultSet = dbConnection.query(sql);
-
+    ResultSet resultSet;
+    String nickname = account.getNickname();
+    String password = account.getPassword();
+    String sql;
     try {
-      // if (resultSet.next()) {
+      sql = "select count(nickname) as count from accounts where nickname=\'" + nickname + "\'";
+
+      resultSet = dbConnection.query(sql);
       resultSet.next();
+
+      // 该账户是否已经被占用
       int num = resultSet.getInt("count");
-      System.out.print(num);
-      // }
-      if (num > 0) {
-        System.out.println("不能使用这个昵称");
-        // try {
+
+      if (num != 0) {
         socketChannel.write(Message.encode("不能使用这个昵称"));
-        // }
-      } else {
-        String password = account.getPassword();
-
-        
-
-        sql = "insert into accounts (nickname, signature, )";
+        return;
       }
-      // while (resultSet.next()) {
-      // int id = resultSet.getInt("id");
-      // String nickname = resultSet.getString("nickname");
-      // String signature = resultSet.getString("signature");
+      sql = "insert into accounts (nickname, password) values('" + nickname + "\', \'" + password + "')";
+      dbConnection.update(sql);
+      sql = "select id, nickname from accounts where nickname='" + nickname + "'";
+      resultSet = dbConnection.query(sql);
 
-      // System.out.println(id + ":" + nickname + ":" + signature);
-      // }
-    } catch (IOException ioE) {
+      resultSet.next();
+
+      int id = resultSet.getInt("id");
+
+      String message = "注册成功：" + id + ":" + nickname;
+
+      socketChannel.write(Message.encode(message));
+    } catch (IOException | SQLException ioE) {
       ioE.printStackTrace();
-      return;
-    } catch (SQLException sqlE) {
-      sqlE.printStackTrace();
     }
-
-    // System.out.println("注册成功");
-    System.out.println(account.getSignature());
   }
 }
