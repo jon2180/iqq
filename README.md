@@ -4,10 +4,18 @@
 
 > 较新的在上面
 
+### 191213
+
+- 建立客户端和服务端登录验证通信
+  > 在App.java中创建登录窗体，当点击确定时，在响应事件中实例化client中的Login对象，用于与服务端建立通信
+  > 在Login.java中通过Client建立通信，并成功把用户输入信息包装成Accounts对象传给服务端，url为user/login
+  > 服务端在Router.java中对事件进行分发,增加了一个loginCheck方法，在该方法中实例化一个sever的Login对象，完成验证的逻辑
+  > @author eraevil
+
 ### 191212
 
 - 增加登录和注册窗体类，运行App可成功创建
-  > @...
+  > @author eraevil
 - 更新一些文档
   > [文件结构](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)\
   > [服务端类之间的调用关系](#%e6%9c%8d%e5%8a%a1%e7%ab%af%e7%b1%bb%e9%97%b4%e8%b0%83%e7%94%a8%e5%85%b3%e7%b3%bb)\
