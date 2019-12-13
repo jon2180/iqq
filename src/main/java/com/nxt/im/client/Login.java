@@ -21,8 +21,8 @@ public class Login {
 
   public void lisent() throws IOException {
     try {
-      Client client = new Client();
-      client.init();
+      ClientSocket client = new ClientSocket();
+      // client.init();
 
       Accounts account = new Accounts();
       account.setNickname(this.nickname);

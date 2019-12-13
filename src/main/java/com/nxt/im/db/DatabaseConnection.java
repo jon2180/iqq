@@ -42,13 +42,9 @@ public class DatabaseConnection {
    * @param sqlStatement 查询语句
    * @return
    */
-  public ResultSet query(String sqlStatement) {
-    try {
-      pStatement = connection.prepareStatement(sqlStatement);
-      resultSet = pStatement.executeQuery();
-    } catch (SQLException sqlE) {
-      sqlE.printStackTrace();
-    }
+  public ResultSet query(String sqlStatement) throws SQLException {
+    pStatement = connection.prepareStatement(sqlStatement);
+    resultSet = pStatement.executeQuery();
     return resultSet;
   }
 
@@ -57,13 +53,9 @@ public class DatabaseConnection {
    * 
    * @param sqlStatement 更新语句
    */
-  public void update(String sqlStatement) {
-    try {
-      pStatement = connection.prepareStatement(sqlStatement);
-      pStatement.executeUpdate();
-    } catch (SQLException sqlE) {
-      sqlE.printStackTrace();
-    }
+  public void update(String sqlStatement) throws SQLException {
+    pStatement = connection.prepareStatement(sqlStatement);
+    pStatement.executeUpdate();
   }
 
   public void close() {
@@ -88,15 +80,5 @@ public class DatabaseConnection {
       System.out.println("数据库连接关闭异常：" + e.getMessage());
     }
 
-  }
-
-  public static void main(String[] args) {
-    DatabaseConnection databaseConnection = new DatabaseConnection();
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException iE) {
-      iE.printStackTrace();
-    }
-    databaseConnection.close();
   }
 }

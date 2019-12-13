@@ -5,12 +5,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 
 import java.nio.channels.ClosedChannelException;
-
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Channel;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -18,8 +15,6 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Set;
-
-import com.nxt.im.common.DataByteBuffer;
 
 /**
  * 初始化服务 关键类：Channels ServerSocketCHannel,Selector,SelectorKey
@@ -43,28 +38,15 @@ public class NioServer {
     inetSocketAddress = new InetSocketAddress(port);
     socketMap = new HashMap<Integer, SelectionKey>();
 
-    /**
-     * 创建一个selector
-     */
+    // 创建一个selector
     selector = Selector.open();
-    /**
-     * 通过serversocketchannel 创建channel通道
-     */
+    // 通过serversocketchannel 创建channel通道
     serverSocketChannel = ServerSocketChannel.open();
-
-    /**
-     * 为channel 通道绑定监听端口
-     */
+    // 为channel 通道绑定监听端口
     serverSocketChannel.bind(inetSocketAddress);
-
-    /**
-     * 设置channel为非阻塞模式
-     */
+    // 设置channel为非阻塞模式
     serverSocketChannel.configureBlocking(false);
-
-    /**
-     * 将channel 注册到selector上，监听连接事件
-     */
+    // 将channel 注册到selector上，监听连接事件
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
     System.out.println("Server running at " + inetSocketAddress.getAddress() + ":" + inetSocketAddress.getPort());
@@ -74,19 +56,18 @@ public class NioServer {
     this(8000);
   }
 
-  public ByteBuffer encode(String str) {
-    return Charset.forName("UTF-8").encode(str);
+  /**
+   * @return the socketMap
+   */
+  public HashMap<Integer, SelectionKey> getSocketMap() {
+    return socketMap;
   }
 
   public void listen() {
 
-    /**
-     * 服务器启动成功
-     */
+    // 服务器启动成功
     while (true) {
-      /**
-       * TODO: 获取可用channel数量
-       */
+      // TODO: 获取可用channel数量
       int readyChannels = 0;
       try {
         readyChannels = selector.select();
@@ -99,22 +80,16 @@ public class NioServer {
         continue;
       }
 
-      /**
-       * 获取所有可用channel的集合
-       */
+      // 获取所有可用channel的集合
       Set<SelectionKey> selectionKeys = selector.selectedKeys();
 
       Iterator<SelectionKey> iterator = selectionKeys.iterator();
 
       while (iterator.hasNext()) {
-        /**
-         * selectionKey实例
-         */
+        // selectionKey实例
         SelectionKey selectionKey = iterator.next();
 
-        /**
-         * [!] 移除set中的当前的selectionKey
-         */
+        // [!] 移除set中的当前的selectionKey
         iterator.remove();
 
         /**
@@ -134,36 +109,18 @@ public class NioServer {
     }
   }
 
-  /**
-   * @return the socketMap
-   */
-  public HashMap<Integer, SelectionKey> getSocketMap() {
-    return socketMap;
-  }
-
   public void acceptHandler(ServerSocketChannel serverSocketChannel, Selector selector) throws IOException {
-    /**
-     * 如果是接入事件，创建socketchannel
-     */
+    // 如果是接入事件，创建socketchannel
     SocketChannel socketChannel = serverSocketChannel.accept();
 
-    /**
-     * 将socketChannel设置为非阻塞工作模式
-     */
+    // 将socketChannel设置为非阻塞工作模式
     socketChannel.configureBlocking(false);
 
-    /**
-     * 将channel注册到selector上，监听可读事件
-     */
+    // 将channel注册到selector上，监听可读事件
     socketChannel.register(selector, SelectionKey.OP_READ);
-    // SelectionKey selectionKey = socketChannel.register(selector,
-    // SelectionKey.OP_READ);
-    // socketMap.put("123", selectionKey);
- 
-    /**
-     * 回复客户端提示信息
-     */
-    socketChannel.write(encode("请注意隐私安全"));
+
+    // 回复客户端提示信息
+    socketChannel.write(Message.encode("请注意隐私安全"));
   }
 
   /**
@@ -173,25 +130,17 @@ public class NioServer {
    * @param selector
    */
   public void readHandler(SelectionKey selectionKey, Selector selector) {
-    /**
-     * 要从selectionKey中获取到已经就绪的channel
-     */
+    // 要从selectionKey中获取到已经就绪的channel
     SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-    /**
-     * 创建buffer
-     */
+    // 创建buffer
     ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 
     try {
       socketChannel.read(byteBuffer);
-      Router.dispatch(socketChannel,  new DataByteBuffer(byteBuffer));
-
+      Router.dispatch(socketChannel, byteBuffer);
     } catch (IOException ioE) {
       // ioE.printStackTrace();
-      // return;
-    } catch (ClassNotFoundException cnfE) {
-      cnfE.printStackTrace();
       // return;
     }
 
