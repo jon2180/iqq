@@ -7,9 +7,9 @@
 ### 191213
 
 - 建立客户端和服务端登录验证通信
-  > 在App.java中创建登录窗体，当点击确定时，在响应事件中实例化client中的Login对象，用于与服务端建立通信\
-  > 在Login.java中通过Client建立通信，并成功把用户输入信息包装成Accounts对象传给服务端，url为user/login\
-  > 服务端在Router.java中对事件进行分发,增加了一个loginCheck方法，在该方法中实例化一个sever的Login对象，完成验证的逻辑\
+  > - 在App.java中创建登录窗体，当点击确定时，在响应事件中实例化client中的Login对象，用于与服务端建立通信\
+  > - 在Login.java中通过Client建立通信，并成功把用户输入信息包装成Accounts对象传给服务端，url为user/login\
+  > - 服务端在Router.java中对事件进行分发,增加了一个loginCheck方法，在该方法中实例化一个sever的Login对象，完成验证的逻辑\
   > @author eraevil
 
 ### 191212
