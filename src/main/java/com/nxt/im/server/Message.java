@@ -14,7 +14,7 @@ public class Message {
    * @param str 消息
    * @return ByteBuffer 对象
    */
-  public ByteBuffer encode(String str) {
+  public static ByteBuffer encode(String str) {
     return Charset.forName("UTF-8").encode(str);
   }
 

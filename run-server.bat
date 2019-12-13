@@ -1,0 +1,1 @@
+@call .\run.bat com.nxt.im.Server
