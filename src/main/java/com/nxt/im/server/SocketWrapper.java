@@ -43,6 +43,13 @@ public class SocketWrapper {
   }
 
   /**
+   * @param fridents the fridents to set
+   */
+  public void setFridents(Vector<Integer> fridents) {
+    this.fridents = fridents;
+  }
+
+  /**
    * @return the fridents
    */
   public Vector<Integer> getFridents() {

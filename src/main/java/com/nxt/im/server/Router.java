@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 
 import com.nxt.im.common.Accounts;
 import com.nxt.im.common.DataByteBuffer;
@@ -46,6 +47,12 @@ public class Router {
     }
   }
 
+  /**
+   * 注册用户
+   * 
+   * @param socketChannel 用来给客户端回复消息
+   * @param account       需要的数据
+   */
   private static void registerUser(SocketChannel socketChannel, Accounts account) {
     ResultSet resultSet;
     String nickname = account.getNickname();
@@ -101,6 +108,41 @@ public class Router {
        * TODO: 这个时候要对socketChannel做点啥？是不？ 类似于session记录登录状态的感觉？
        * 把nickname放到某个已登录队列里去的这种操作？
        */
+      // 假设 id 为 2
+      Integer id = 5;
+      SocketWrapper socketWrapper = new SocketWrapper(id, socketChannel);
+      
+      // TODO 把当前用户的 id 作为键，对应的 SocketWrapper 对象作为值，放进 socketMap 中
+      // NioServer.getSocketMap().put(id, socketWrapper);
+
+      // TODO 获取到用户的好友列表
+      // select id, origin_account, target_account, group_name, type from friends where origin_account= + id
+
+      // TODO 获取各好友的在线状态，并通知在线好友：“我上线了”
+      /*
+      Iterator<Integer> it = socketWrapper.getFridents().iterator();
+      while(it.hasNext()) {
+        // TODO 通知其在线好友，xxx 上线了
+        Integer friendId = it.next();
+        if (NioServer.getSocketMap().containsKey(friendId)) {
+          try {
+            // TODO 消息可能需要包装，这里没有进行包装
+            NioServer.getSocketMap().get(friendId).getChannel().write(Message.encode(friendId + "上线了"));
+          } catch(IOException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+      */
+      /*
+      try {
+        // TODO 向用户返回消息：好友列表，和在线状态，以及一些未接收消息
+        socketChannel.write();
+      } catch(IOException e) {
+        
+      }
+      */
+
 
     } else {
       System.out.println("登录验证失败！");

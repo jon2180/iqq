@@ -28,7 +28,11 @@ public class NioServer {
    */
   private Selector selector;
 
-  private HashMap<Integer, SelectionKey> socketMap;
+  private static HashMap<Integer, SocketWrapper> socketMap;
+  static {
+    socketMap = new HashMap<Integer, SocketWrapper>();
+  }
+
   /**
    * socket
    */
@@ -36,7 +40,6 @@ public class NioServer {
 
   public NioServer(int port) throws IOException {
     inetSocketAddress = new InetSocketAddress(port);
-    socketMap = new HashMap<Integer, SelectionKey>();
 
     // 创建一个selector
     selector = Selector.open();
@@ -59,7 +62,7 @@ public class NioServer {
   /**
    * @return the socketMap
    */
-  public HashMap<Integer, SelectionKey> getSocketMap() {
+  public static HashMap<Integer, SocketWrapper> getSocketMap() {
     return socketMap;
   }
 
