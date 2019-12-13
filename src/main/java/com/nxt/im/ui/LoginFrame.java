@@ -83,15 +83,18 @@ public class LoginFrame extends JFrame{//类名 loginFrame
 			public void actionPerformed(ActionEvent e) {
                 String uname = username.getText();
                 String pwd = String.valueOf(password.getPassword());
-
-                try {
-                    Login loginObj = new Login(uname,pwd);
-                    loginObj.lisent();
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+                if(uname.equals("") || pwd.equals("")){
+                    System.out.println("用户名或密码不能为空");
+                }else{
+                    try {
+                        Login loginObj = new Login(uname,pwd);
+                        loginObj.lisent();
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    System.out.println(uname+ " " +pwd);
                 }
-                
-                System.out.println(uname+ " " +pwd);
+
 			}
 		};
 		//把监听器注册到控件上
