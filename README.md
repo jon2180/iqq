@@ -7,8 +7,8 @@
 ### 191213
 
 - 建立客户端和服务端登录验证通信
-  > 在[App.java](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)中创建登录窗体，当点击确定时，在响应事件中实例化client中的[Login对象](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)，用于与服务端建立通信
-  > 在[Login.java](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)中通过[Client](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)建立通信，并成功把用户输入信息包装成[Accounts对象](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)传给服务端，url为[/user/login](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)
+  > 在[App.java](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)中创建登录窗体，当点击确定时，在响应事件中实例化client中的[Login对象](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)，用于与服务端建立通信\
+  > 在[Login.java](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)中通过[Client](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)建立通信，并成功把用户输入信息包装成[Accounts对象](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)传给服务端，url为[/user/login](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)\
   > 服务端在[Router.java](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)中对事件进行分发,增加了一个[loginCheck](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)方法，在该方法中实例化一个sever的[Login对象](#%e7%9b%ae%e5%bd%95%e7%bb%93%e6%9e%84)，完成验证的逻辑\
   > @author eraevil
 
