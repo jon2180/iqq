@@ -35,12 +35,15 @@ public class Router {
     switch (url) {
     case "/user/reg":
       registerUser(socketChannel, (Accounts) dataByteBuffer.getData());
+    case "/user/login":
+      loginCheck(socketChannel, (Accounts) dataByteBuffer.getData());
     }
 
     // Accounts account = (Accounts) dataByteBuffer.getData();
     // System.out.println(account.getSignature());
   }
 
+  // 用户注册
   private static void registerUser(SocketChannel socketChannel, Accounts account) {
 
     String sql = "select count(nickname) as count from accounts where nickname=\'" + account.getNickname() + "\'";
@@ -60,9 +63,6 @@ public class Router {
         // }
       } else {
         String password = account.getPassword();
-
-        
-
         sql = "insert into accounts (nickname, signature, )";
       }
       // while (resultSet.next()) {
@@ -81,5 +81,36 @@ public class Router {
 
     // System.out.println("注册成功");
     System.out.println(account.getSignature());
+  }
+
+  /**
+   * 触发登录验证
+   *
+   * TODO: 当客户端将登录验证所需要的信息包装成一个Accounts对象，此时，在这里创建一个Login对象，
+   *       该对象中包含有登录验证的方法，那么，socketChannel是用来做什么呢？
+   * @version 191213
+   */
+  private static void loginCheck(SocketChannel socketChannel, Accounts account) {
+    String nickname = account.getNickname();
+    String password = account.getPassword();
+
+    Login login = new Login(nickname,password);
+    if(login.check() == true){
+      System.out.println("登录验证成功！");
+
+
+      /**
+       * TODO: 这个时候要对socketChannel做点啥？是不？
+       * 类似于session记录登录状态的感觉？
+       * 把nickname放到某个已登录队列里去的这种操作？
+       */
+
+       
+    }else{
+      System.out.println("登录验证失败！");
+    }
+
+
+    
   }
 }

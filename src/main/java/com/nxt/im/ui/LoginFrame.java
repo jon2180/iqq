@@ -2,7 +2,7 @@ package com.nxt.im.ui;
 import java.awt.*;
 // import java.awt.FlowLayout;
 // import java.awt.GridLayout;
-
+import com.nxt.im.client.Login;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,7 +83,15 @@ public class LoginFrame extends JFrame{//类名 loginFrame
 			public void actionPerformed(ActionEvent e) {
                 String uname = username.getText();
                 String pwd = String.valueOf(password.getPassword());
-                System.out.println(uname+pwd);
+
+                try {
+                    Login loginObj = new Login(uname,pwd);
+                    loginObj.lisent();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+                
+                System.out.println(uname+ " " +pwd);
 			}
 		};
 		//把监听器注册到控件上
