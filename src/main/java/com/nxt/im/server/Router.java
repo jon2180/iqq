@@ -38,9 +38,9 @@ public class Router {
       String url = dataByteBuffer.getUrl();
       switch (url) {
       case "/user/reg":
-        registerUser(socketChannel, (Accounts) dataByteBuffer.getData());
+        registerUser(socketChannel, (Accounts) dataByteBuffer.getData());break;
       case "/user/login":
-        loginCheck(socketChannel, (Accounts) dataByteBuffer.getData());
+        loginCheck(socketChannel, (Accounts) dataByteBuffer.getData());break;
       }
     } catch (ClassNotFoundException | IOException e) {
       e.printStackTrace();
@@ -97,12 +97,48 @@ public class Router {
    * @version 191213
    */
   private static void loginCheck(SocketChannel socketChannel, Accounts account) {
-    String nickname = account.getNickname();
+    ResultSet resultSet;
+    String qnumber = account.getQnumber();
     String password = account.getPassword();
+    String sql;
+    try {
+      sql = "SELECT id,qnumber,nickname,password FROM accounts where qnumber = '" + qnumber + "'";
+      resultSet = dbConnection.query(sql);
 
-    Login login = new Login(nickname, password);
-    if (login.check() == true) {
-      System.out.println("登录验证成功！");
+      if(resultSet.next() != false){
+        String realPassword = resultSet.getString("password");
+
+        System.out.println("password:" + password);
+        System.out.println("realPassword:" + realPassword);
+
+
+        if(realPassword.equals(password)){
+          System.out.println("成功登录");
+          String msg = "10000";
+          socketChannel.write(Message.encode(msg));
+        }else{
+          System.out.println("登录失败");
+        }
+      }else{
+        System.out.println("无此用户");
+        String msg = "10002";
+        socketChannel.write(Message.encode(msg));
+      }
+    } catch (IOException | SQLException ioE) {
+      ioE.printStackTrace();
+    }
+    
+
+    
+
+
+
+
+
+
+    // Login login = new Login(qnumber, password);
+    // if (login.check() == true) {
+      // System.out.println("登录验证成功！");
 
       /**
        * TODO: 这个时候要对socketChannel做点啥？是不？ 类似于session记录登录状态的感觉？
@@ -144,9 +180,9 @@ public class Router {
       */
 
 
-    } else {
-      System.out.println("登录验证失败！");
-    }
+    // } else {
+    //   System.out.println("登录验证失败！");
+    // }
 
   }
 }
