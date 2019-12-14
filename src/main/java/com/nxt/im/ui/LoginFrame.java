@@ -2,7 +2,6 @@ package com.nxt.im.ui;
 import java.awt.*;
 // import java.awt.FlowLayout;
 // import java.awt.GridLayout;
-import com.nxt.im.client.Login;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
