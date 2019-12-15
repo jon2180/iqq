@@ -7,15 +7,15 @@
 ### 191215
 
 - 重构了注册逻辑
-  > 现以QQ号作为索引键
+  > 现以QQ号作为索引键\
   > @author jon2180
 - 优化用户在网络中传输的 DataByteBuffer 类的结构
-  > 添加了 mid, statusCode, time字段，具体请查看[DataByteBuffer](./src/main/java/com/nxt/im/common/DataByteBuffer.java)
+  > 添加了 mid, statusCode, time字段，具体请查看[DataByteBuffer](./src/main/java/com/nxt/im/common/DataByteBuffer.java)\
   > @author jon2180
 - 添加 com.nxt.im.server.Message 的单元测试
   >@author jon2180
 - 添加了聊天界面
-  > 简易聊天页面
+  > 简易聊天页面\
   > author deathwing111
 
 
