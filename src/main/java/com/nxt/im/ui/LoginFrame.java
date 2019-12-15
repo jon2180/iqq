@@ -1,7 +1,6 @@
 package com.nxt.im.ui;
+
 import java.awt.*;
-// import java.awt.FlowLayout;
-// import java.awt.GridLayout;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +10,10 @@ import javax.swing.*;
 
 public class LoginFrame extends JFrame{//类名 loginFrame
     
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private JFrame loginFrame = new JFrame("登录");
     private Container lc = loginFrame.getContentPane();
     private JLabel a1 = new JLabel("QQ号");
@@ -71,7 +74,7 @@ public class LoginFrame extends JFrame{//类名 loginFrame
 			public void actionPerformed(ActionEvent e) {
                 loginFrame.setVisible(false);
                 // registerFrame.setVisible(true);
-                RegisterFrame rf = new RegisterFrame(); // 创建注册窗体
+                RegisterFrame rf = RegisterFrame.getInstance(); // 创建注册窗体
 			}
 		};
 		//把监听器注册到控件上
@@ -89,6 +92,7 @@ public class LoginFrame extends JFrame{//类名 loginFrame
                     try {
                         if(ClientRouter.userLog(qnum, pwd)){
                             System.out.println("已经成功递交登录请求。。");
+                            
                         }else{
                             System.out.println("请求失败。");
                         }

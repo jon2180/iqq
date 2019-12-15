@@ -28,11 +28,7 @@ public class ClientRouter {
     Accounts account = new Accounts();
     account.setNickname(nickname);
     account.setPassword(password);
-    // account.setEmail("763653451@qq.com");
-    // account.setSignature("this is a signature");
     DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/reg", account);
-    dataByteBuffer.setType("json");
-
     try {
       ClientRouter.client.send(dataByteBuffer.toByteBuffer());
       return true;

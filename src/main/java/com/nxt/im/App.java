@@ -1,6 +1,6 @@
 package com.nxt.im;
 
-import java.io.IOException;
+// import java.io.IOException;
 // import com.nxt.im.client.Client;
 // import com.nxt.im.ui.Chat;
 import com.nxt.im.ui.LoginFrame;
@@ -18,6 +18,8 @@ public final class App {
      */
     public static void main(String[] args) {
         new LoginFrame();
+        
+
         System.out.println("Create LoginFrame!");
     }
 }

@@ -13,7 +13,9 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.nxt.im.common.Accounts;
 import com.nxt.im.common.DataByteBuffer;
+import com.nxt.im.ui.RegisterFrame;
 
 /**
  * 基于NIO实现的发消息的线程类
@@ -79,25 +81,23 @@ public class ResponseHandler implements Runnable {
     ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 
     // 循环读取客户端请求信息
-    String response = "";
+
     try {
-      // socketChannel.read(byteBuffer);
-      // DataByteBuffer data = new DataByteBuffer(byteBuffer);
-      // data.getData();
-      while (socketChannel.read(byteBuffer) > 0) {  
-        /**
-         * 切换buffer为读模式
-         */
-        byteBuffer.flip();
+      socketChannel.read(byteBuffer);
+      DataByteBuffer data = new DataByteBuffer(byteBuffer);
 
-        /**
-         * 读取buffer中的内容
-         */
-
-        response += Charset.forName("UTF-8").decode(byteBuffer);
-
+      switch (data.getUrl()) {
+      case "/user/reg": {
+        Accounts accounts = (Accounts) data.getData();
+        System.out.println(accounts.getQnumber() + " : " + accounts.getNickname());
+        RegisterFrame.getInstance().reg(accounts);
+        break;
       }
-    } catch (IOException ioe) {
+      case "/user/log": {
+        
+      }
+      }
+    } catch (IOException | ClassNotFoundException ioe) {
       ioe.printStackTrace();
       return;
     }
@@ -110,13 +110,5 @@ public class ResponseHandler implements Runnable {
       cce.printStackTrace();
       return;
     }
-
-    /**
-     * 显示出信息内容
-     */
-    if (response.length() > 0) {
-      System.out.println(response);
-    }
-
   }
 }

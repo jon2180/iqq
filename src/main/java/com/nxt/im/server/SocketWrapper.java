@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import com.nxt.im.common.Friends;
 import com.nxt.im.db.DatabaseConnection;
 
 public class SocketWrapper {
@@ -18,7 +19,7 @@ public class SocketWrapper {
    */
   private SocketChannel channel;
 
-  private Vector<String> fridents;
+  private Vector<Friends> fridents;
 
   public SocketWrapper(String userId, SocketChannel channel) {
     this.userId = userId;
@@ -49,33 +50,41 @@ public class SocketWrapper {
   /**
    * @param fridents the fridents to set
    */
-  public void setFridents(Vector<String> fridents) {
+  public void setFridents(Vector<Friends> fridents) {
     this.fridents = fridents;
   }
 
   /**
    * @return the fridents
    */
-  public Vector<String> getAllFridents() {
+  public Vector<Friends> getAllFridents() {
     return fridents;
   }
 
   public void updateFriendsList() {
-    DatabaseConnection dbConn = new DatabaseConnection();
+    // DatabaseConnection dbConn = new DatabaseConnection();
 
-    Vector<String> temp = new Vector<String>(); 
+    // Vector<String> temp = new Vector<String>(); 
 
-    String sql = "select target_account, group_name, type from friends where origin_account=" + userId;
+    // String sql = "select target_account, group_name, type from friends where origin_account=" + userId;
 
-    ResultSet resultSet;
-    try {
-      resultSet = dbConn.query(sql);
-      while(resultSet.next()) {
-        int targetAccount = resultSet.getInt("target_account");
-        String groupName = resultSet.getString("group_name");
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
+    // ResultSet resultSet;
+    // try {
+    //   resultSet = dbConn.query(sql);
+    //   while(resultSet.next()) {
+    //     Friends friends = new Friends();
+    //     friends.setId();
+    //     int targetAccount = resultSet.getInt("target_account");
+    //     String groupName = resultSet.getString("group_name");
+
+
+    //   }
+    // } catch (SQLException e) {
+    //   e.printStackTrace();
+    // }
+  }
+
+  public void notifyAllFriends() {
+
   }
 }

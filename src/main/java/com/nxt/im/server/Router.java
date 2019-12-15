@@ -82,13 +82,12 @@ public class Router {
 
       // TODO 待把客户端接收部分处理好了再取消注释
       // 把账户返回给客户端
-      // account.setQnumber(qq);
-      // socketChannel.write(new DataByteBuffer("re:/user/reg",
-      // account).toByteBuffer());
+      account.setQnumber(qq);
+      socketChannel.write(new DataByteBuffer("/user/reg", account).toByteBuffer());
 
-      String message = "注册成功：" + qq + ":" + nickname;
+      // String message = "注册成功：" + qq + ":" + nickname;
 
-      socketChannel.write(Message.encode(message));
+      // socketChannel.write(Message.encode(message));
     } catch (IOException | SQLException ioE) {
       ioE.printStackTrace();
     }
@@ -147,15 +146,16 @@ public class Router {
       // TODO 获取各好友的在线状态，并通知在线好友：“我上线了”
       // Iterator<String> it = socketWrapper.getAllFridents().iterator();
       // while (it.hasNext()) {
-        // String friendId = it.next();
-        // if (NioServer.getSocketMap().containsKey(friendId)) {
-          // try { 
-            // TODO 消息需要包装，这里暂时还没有进行包装
-            // NioServer.getSocketMap().get(friendId).getChannel().write(Message.encode(friendId + "上线了"));
-          // } catch (IOException e) {
-            // e.printStackTrace();
-          // }
-        // }
+      // String friendId = it.next();
+      // if (NioServer.getSocketMap().containsKey(friendId)) {
+      // try {
+      // TODO 消息需要包装，这里暂时还没有进行包装
+      // NioServer.getSocketMap().get(friendId).getChannel().write(Message.encode(friendId
+      // + "上线了"));
+      // } catch (IOException e) {
+      // e.printStackTrace();
+      // }
+      // }
       // }
     } catch (IOException | SQLException ioE) {
       ioE.printStackTrace();
