@@ -110,16 +110,40 @@ public class RegisterFrame extends JFrame {
         ActionListener rar = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                registerFrame.setVisible(false);
+                // 
 
                 String nickname = String.valueOf(username.getText());
                 String pwd = String.valueOf(password.getPassword());
+                String repwd = String.valueOf(repassword.getPassword());
 
-                if (ClientRouter.userReg(nickname, pwd)) {
-                    LoginFrame ft = new LoginFrame(); // 创建登录窗体
-                } else {
 
+                Object message = "you connot input a null value!";
+                String title = "ERROR";
+                if((nickname == null || nickname.length() <= 0) || (pwd == null || pwd.length() <= 0) || (repwd == null || repwd.length() <= 0)){
+                    JOptionPane.showMessageDialog(null, message, title, 0);
+                }else{
+                    // System.out.println(nickname + "\r\n" + pwd + "\r\n" + repwd);
+                    // registerFrame.setVisible(false);
+
+                    
+                    if (ClientRouter.userReg(nickname, pwd)) {
+                        registerFrame.setVisible(false);
+                        LoginFrame ft = new LoginFrame(); // 创建登录窗体
+                    } else {
+    
+                    }
+                    
                 }
+
+                // if (ClientRouter.userReg(nickname, pwd)) {
+                //     LoginFrame ft = new LoginFrame(); // 创建登录窗体
+                // } else {
+
+                // }
+
+
+
+                
 
             }
         };
