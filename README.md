@@ -21,6 +21,8 @@
 - 添加了聊天界面
   > 简易聊天页面\
   > author deathwing111
+- 增加登录和注册界面的非空验证
+  > @author deathwing111
 
 
 ### 191214
