@@ -14,9 +14,14 @@ public class Accounts implements Serializable {
    */
   private static final long serialVersionUID = 1L;
   /**
-   * QQ号
+   * id号
    */
   private int id;
+
+   /**
+   * QQ号
+   */
+  private String qnumber;
 
   /**
    * 昵称
@@ -72,6 +77,20 @@ public class Accounts implements Serializable {
    * 状态：即是否被禁用
    */
   private int status;
+
+  /**
+   * @return the qnumber
+   */
+  public String getQnumber() {
+    return qnumber;
+  }
+
+  /**
+   * @param qnumber the qnumber to set
+   */
+  public void setQnumber(String qnumber) {
+    this.qnumber = qnumber;
+  }
 
   /**
    * @return the nickname

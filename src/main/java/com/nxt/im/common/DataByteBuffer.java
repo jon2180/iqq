@@ -12,31 +12,87 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 
+
+/**
+ * DataByteBuffer
+ * @description 用于在服务端与客户端通道 Channel 中传递的消息格式规定
+ * @version 191215
+ * @serial
+ */
 public class DataByteBuffer implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Message id
+   * 
+   * @description 指定唯一的消息id
+   */
+  private int mid;
+
+  /**
+   * @description 用于接收方收到消息后的操作
+   */
   private String url;
 
+  /**
+   * @description 真实数据
+   */
   private Serializable data;
 
+  /**
+   * @description 消息类型 - 类似于 http 中的 Content-Type 字段
+   */
   private String type = "serial-data";
+
+  /**
+   * @description 消息建立的时间戳
+   */
+  private long time;
+
+  /**
+   * @description 状态码 类似于 http 的状态码
+   */
+  private int statusCode;
 
   public DataByteBuffer(ByteBuffer byteBuffer) throws IOException, ClassNotFoundException {
     DataByteBuffer dataByteBuffer = (DataByteBuffer) DataByteBuffer.byteBufferToObject(byteBuffer);
     this.url = dataByteBuffer.url;
     this.data = dataByteBuffer.data;
     this.type = dataByteBuffer.type;
+    this.time = System.currentTimeMillis();
   }
 
   public DataByteBuffer(String url, Serializable data) {
     this.url = url;
     this.data = data;
     this.type = "serial-data";
+    this.time = System.currentTimeMillis();
   }
 
   public DataByteBuffer() {
 
+  }
+
+  /**
+   * @return the mid
+   */
+  public int getMid() {
+    return mid;
+  }
+  
+  /**
+   * @param statusCode the statusCode to set
+   */
+  public void setStatusCode(int statusCode) {
+    this.statusCode = statusCode;
+  }
+
+  /**
+   * @return the statusCode
+   */
+  public int getStatusCode() {
+    return statusCode;
   }
 
   /**
@@ -48,6 +104,13 @@ public class DataByteBuffer implements Serializable {
 
   public String getUrl() {
     return url;
+  }
+
+  /**
+   * @return the time
+   */
+  public long getTime() {
+    return time;
   }
 
   /**

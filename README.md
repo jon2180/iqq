@@ -1,10 +1,32 @@
 # fake-qq
 
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/jon2180/fake-qq/Java CI">
+
+<img alt="GitHub" src="https://img.shields.io/github/license/jon2180/fake-qq">
+
 ## Changelog更改日志
 
 > 较新的在上面
 
+### 191215
 
+- 重构了注册逻辑
+  > 现以QQ号作为索引键\
+  > @author jon2180
+- 优化用户在网络中传输的 DataByteBuffer 类的结构
+  > 添加了 mid, statusCode, time字段，具体请查看[DataByteBuffer](./src/main/java/com/nxt/im/common/DataByteBuffer.java)\
+  > @author jon2180
+- 添加 com.nxt.im.server.Message 的单元测试
+  >@author jon2180
+- 添加了聊天界面
+  > 简易聊天页面\
+  > author deathwing111
+
+
+### 191214
+
+- 完成登录的逻辑
+- 更新了一份新的sql，增加了accounts表里qnumber字段，id作为自增数字id作为一个用户的qq号不太合理
 
 ### 191213
 

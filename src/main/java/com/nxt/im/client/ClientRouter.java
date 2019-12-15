@@ -28,9 +28,29 @@ public class ClientRouter {
     Accounts account = new Accounts();
     account.setNickname(nickname);
     account.setPassword(password);
-    // account.setEmail("763653451@qq.com");
-    // account.setSignature("this is a signature");
     DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/reg", account);
+    try {
+      ClientRouter.client.send(dataByteBuffer.toByteBuffer());
+      return true;
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+      return false;
+    }
+  }
+
+  /**
+   * 登录
+   * 
+   * @param qnumber 昵称
+   * @param password 密码
+   * @return
+   */
+  public static boolean userLog(String qnumber, String password) {
+    Accounts account = new Accounts();
+    account.setQnumber(qnumber);
+    account.setPassword(password);
+
+    DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/login", account);
     dataByteBuffer.setType("json");
 
     try {
@@ -41,5 +61,7 @@ public class ClientRouter {
       return false;
     }
   }
+
+
 
 }
