@@ -38,6 +38,9 @@ public class RegisterFrame extends JFrame {
     private JButton certainbtn;
     private JButton cancelbtn;
 
+    private Accounts accounts;
+    private int statusCode;
+
     public static RegisterFrame getInstance() {
         if (instance == null) {
             synchronized (RegisterFrame.class) {
@@ -107,7 +110,7 @@ public class RegisterFrame extends JFrame {
         rc.add(buttonPanel, "South");
 
         // 创建 确定按钮 监听器对象
-        ActionListener rar = new ActionListener() {
+        ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 registerFrame.setVisible(false);
@@ -115,15 +118,25 @@ public class RegisterFrame extends JFrame {
                 String nickname = String.valueOf(username.getText());
                 String pwd = String.valueOf(password.getPassword());
 
-                if (ClientRouter.userReg(nickname, pwd)) {
-                    LoginFrame ft = new LoginFrame(); // 创建登录窗体
-                } else {
-
+                if (!ClientRouter.userReg(nickname, pwd)) {
+                    return;
                 }
 
+                // try {
+                //     wait();
+                // } catch (InterruptedException e1) {
+                //     e1.printStackTrace();
+                //     return;
+                // }
+
+                // if (statusCode == 200) {
+                //     new LoginFrame(); // 创建登录窗体
+                // } else {
+                //     System.out.println("err:reg");
+                // }
             }
         };
-        certainbtn.addActionListener(rar);
+        certainbtn.addActionListener(actionListener);
 
         // 创建 取消按钮 监听器对象
         ActionListener racan = new ActionListener() {
@@ -139,12 +152,24 @@ public class RegisterFrame extends JFrame {
 
     }
 
-    public void reg(Accounts accounts) {
-        JOptionPane.showMessageDialog(new JPanel(), accounts.getQnumber(), "您的QQ账号，请牢记", JOptionPane.OK_OPTION);
+    public void register(int code, Accounts acnt) {
+        // 获取数据
+        this.statusCode = code;
+        this.accounts = acnt;
+
+        // 展示提示信息
+        System.out.println(code);
+        if (statusCode == 200) {
+            JOptionPane.showMessageDialog(new JPanel(), accounts.getQnumber(), "您的QQ账号，请牢记", JOptionPane.OK_OPTION);
+        } else {
+            JOptionPane.showMessageDialog(new JPanel(), "注册过程出错", "错误", JOptionPane.OK_OPTION);
+        }
+
+        // 通知主线程开始运行
+        // actionListener.notify();
     }
 
     public static void main(String[] args) {
         RegisterFrame.getInstance();
-
     }
 }

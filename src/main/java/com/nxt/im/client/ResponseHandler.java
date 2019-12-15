@@ -9,7 +9,7 @@ import java.nio.channels.SelectionKey;
 // import java.nio.channels.Selector;
 // import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
+// import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -37,10 +37,10 @@ public class ResponseHandler implements Runnable {
      */
     while (true) {
       try {
-        // TODO: 获取可用channel数量
+        // TODO 获取可用channel数量
         int readyChannels = selector.select();
 
-        // TODO: 为什么要这样？
+        // TODO 为什么要这样？
         if (readyChannels == 0)
           continue;
 
@@ -78,7 +78,7 @@ public class ResponseHandler implements Runnable {
     // 要从selectionKey中获取到已经就绪的channel
     SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    ByteBuffer byteBuffer = ByteBuffer.allocate(3096);
 
     // 循环读取客户端请求信息
 
@@ -90,15 +90,24 @@ public class ResponseHandler implements Runnable {
       case "/user/reg": {
         Accounts accounts = (Accounts) data.getData();
         System.out.println(accounts.getQnumber() + " : " + accounts.getNickname());
-        RegisterFrame.getInstance().reg(accounts);
+        RegisterFrame.getInstance().register(data.getStatusCode(), accounts);
         break;
       }
       case "/user/log": {
-        
+        // Accounts accounts = (Accounts) data.getData();
+        // System.out.println(accounts.getQnumber() + " : " + accounts.getNickname());
+        // RegisterFrame.getInstance().register(data.getStatusCode(), accounts);
+        break;
       }
       }
     } catch (IOException | ClassNotFoundException ioe) {
       ioe.printStackTrace();
+      try {
+        if (socketChannel != null)
+          socketChannel.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
       return;
     }
     /**

@@ -21,12 +21,12 @@ public class Friends implements Serializable {
   /**
    * 当前账户
    */
-  private int origin_account;
+  private String origin_account;
 
   /**
    * 好友账户
    */
-  private int target_account;
+  private String target_account;
 
   /**
    * 所在群组
@@ -37,6 +37,15 @@ public class Friends implements Serializable {
    * 好友状态，即为是否在黑名单
    */
   private int type;
+
+
+  public Friends(int id, String QQ, String friendQQ, String groupName, int type) {
+    this.id = id;
+    this.origin_account = QQ;
+    this.target_account = friendQQ;
+    this.group_name = groupName;
+    this.type = type;
+  }
 
   /**
    * @return the id
@@ -55,28 +64,28 @@ public class Friends implements Serializable {
   /**
    * @return the origin_account
    */
-  public int getOrigin_account() {
+  public String getOrigin_account() {
     return origin_account;
   }
 
   /**
    * @param origin_account the origin_account to set
    */
-  public void setOrigin_account(int origin_account) {
+  public void setOrigin_account(String origin_account) {
     this.origin_account = origin_account;
   }
 
   /**
    * @return the target_account
    */
-  public int getTarget_account() {
+  public String getTarget_account() {
     return target_account;
   }
 
   /**
    * @param target_account the target_account to set
    */
-  public void setTarget_account(int target_account) {
+  public void setTarget_account(String target_account) {
     this.target_account = target_account;
   }
 

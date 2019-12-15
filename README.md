@@ -17,11 +17,18 @@
   > 添加了 mid, statusCode, time字段，具体请查看[DataByteBuffer](./src/main/java/com/nxt/im/common/DataByteBuffer.java)\
   > @author jon2180
 - 添加 com.nxt.im.server.Message 的单元测试
-  >@author jon2180
+  > @author jon2180
 - 添加了聊天界面
   > 简易聊天页面\
-  > author deathwing111
-
+  > @author deathwing111
+- 修复了 服务端与客户端在一方断开连接后，一直输出错误报告的bug
+  > @author jon2180
+- 新增消息转发的逻辑
+  > @author jon2180
+- 新增获取好友列表的逻辑
+  > @author jon2180
+- 新增通知在线好友的逻辑
+  > @author jon2180
 
 ### 191214
 

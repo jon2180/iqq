@@ -12,10 +12,14 @@ import java.io.IOException;
  */
 public final class Server {
   public static void main(String[] args) {
+    NioServer server;
     try {
-      new NioServer(8000).listen();
+      server = new NioServer(8000);
     } catch (IOException ioE) {
       ioE.printStackTrace();
+      System.out.println("in Server");
+      return;
     }
+    server.listen();
   }
 }

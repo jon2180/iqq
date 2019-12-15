@@ -71,16 +71,14 @@ public class NioServer {
     // 服务器启动成功
     while (true) {
       // TODO: 获取可用channel数量
-      int readyChannels = 0;
       try {
-        readyChannels = selector.select();
+        if (selector.select() == 0) {
+          continue;
+        }
       } catch (IOException ioE) {
+        System.out.println("in NioServer.listen");
         ioE.printStackTrace();
         break;
-      }
-
-      if (readyChannels == 0) {
-        continue;
       }
 
       // 获取所有可用channel的集合
@@ -98,16 +96,29 @@ public class NioServer {
         /**
          * 根据就绪状态来判断相应的逻辑
          */
-        if (selectionKey.isAcceptable()) {
-          try {
+        SocketChannel socketChannel = null;
+        try {
+          if (selectionKey.isAcceptable()) {
             acceptHandler(serverSocketChannel, selector);
-          } catch (IOException ioE) {
-            ioE.printStackTrace();
-            break;
+          } else if (selectionKey.isReadable()) {
+            // 要从selectionKey中获取到已经就绪的channel
+            socketChannel = (SocketChannel) selectionKey.channel();
+            readHandler(socketChannel);
+            // 将channel再次注册到selector上，监听它的可读事件
+            socketChannel.register(selector, SelectionKey.OP_READ);
           }
-        } else if (selectionKey.isReadable()) {
-          readHandler(selectionKey, selector);
+        } catch (IOException cce) {
+          try {
+            if (socketChannel != null) {
+              socketChannel.close();
+            }
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+          System.out.println("in NioServer.listen");
+          cce.printStackTrace();
         }
+
       }
     }
   }
@@ -132,29 +143,16 @@ public class NioServer {
    * @param selectionKey
    * @param selector
    */
-  public void readHandler(SelectionKey selectionKey, Selector selector) {
-    // 要从selectionKey中获取到已经就绪的channel
-    SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-
+  public void readHandler(SocketChannel socketChannel) throws IOException {
     // 创建buffer
-    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-
-    try {
-      socketChannel.read(byteBuffer);
-      Router.dispatch(socketChannel, byteBuffer);
-    } catch (IOException ioE) {
-      // ioE.printStackTrace();
-      // return;
-    }
-
-    /**
-     * 将channel再次注册到selector上，监听它的可读事件
-     */
-    try {
-      socketChannel.register(selector, SelectionKey.OP_READ);
-    } catch (ClosedChannelException cce) {
-      cce.printStackTrace();
+    ByteBuffer byteBuffer = ByteBuffer.allocate(3096);
+    socketChannel.read(byteBuffer);
+    
+    // 如果没有获取到请求的消息
+    if (byteBuffer.limit() <= 0) {
+      System.out.println("err:noData");
       return;
     }
+    Router.dispatch(socketChannel, byteBuffer);
   }
 }

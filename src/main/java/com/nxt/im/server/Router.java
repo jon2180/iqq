@@ -5,10 +5,11 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
+// import java.util.Iterator;
 
 import com.nxt.im.common.Accounts;
 import com.nxt.im.common.DataByteBuffer;
+import com.nxt.im.common.Messages;
 import com.nxt.im.db.DatabaseConnection;
 
 /**
@@ -45,6 +46,7 @@ public class Router {
         break;
       }
     } catch (ClassNotFoundException | IOException e) {
+      System.out.println("in Router.dispatch");
       e.printStackTrace();
     }
   }
@@ -56,7 +58,7 @@ public class Router {
    * @param account       需要的数据
    */
   private static void registerUser(SocketChannel socketChannel, Accounts account) {
-    ResultSet resultSet;
+    // ResultSet resultSet;
     String nickname = account.getNickname();
     String password = account.getPassword();
     String sql;
@@ -83,10 +85,13 @@ public class Router {
       // TODO 待把客户端接收部分处理好了再取消注释
       // 把账户返回给客户端
       account.setQnumber(qq);
-      socketChannel.write(new DataByteBuffer("/user/reg", account).toByteBuffer());
+      DataByteBuffer data = new DataByteBuffer("/user/reg", account);
+      data.setStatusCode(200);
+      ByteBuffer bb = data.toByteBuffer();
 
+      while (socketChannel.write(bb) > 0)
+        ;
       // String message = "注册成功：" + qq + ":" + nickname;
-
       // socketChannel.write(Message.encode(message));
     } catch (IOException | SQLException ioE) {
       ioE.printStackTrace();
@@ -159,6 +164,28 @@ public class Router {
       // }
     } catch (IOException | SQLException ioE) {
       ioE.printStackTrace();
+    }
+  }
+
+  /**
+   * 发送消息给指定客户端
+   * 
+   * @param message
+   */
+  public static void sendMessage(DataByteBuffer dataBuf) {
+
+    Messages message = (Messages) dataBuf.getData();
+
+    String friendQQ = message.getTarget_account();
+    String content = message.getContent();
+
+    if (NioServer.getSocketMap().containsKey(friendQQ)) {
+      try {
+        // TODO 发送消息
+        NioServer.getSocketMap().get(friendQQ).getChannel().write(Message.encode(content));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 }
