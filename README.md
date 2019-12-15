@@ -1,5 +1,9 @@
 # fake-qq
 
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/jon2180/fake-qq/Java CI">
+
+<img alt="GitHub" src="https://img.shields.io/github/license/jon2180/fake-qq">
+
 ## Changelog更改日志
 
 > 较新的在上面
