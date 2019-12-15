@@ -86,8 +86,11 @@ public class LoginFrame extends JFrame{//类名 loginFrame
 			public void actionPerformed(ActionEvent e) {
                 String qnum = qnumber.getText();
                 String pwd = String.valueOf(password.getPassword());
+                Object message = "wrong username or password!";
+                String title = "ERROR";
                 if(qnum.equals("") || pwd.equals("")){
                     System.out.println("QQ号或密码不能为空");
+                    JOptionPane.showMessageDialog(null, message, title, 0);
                 }else{
                     try {
                         if(ClientRouter.userLog(qnum, pwd)){

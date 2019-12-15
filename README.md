@@ -16,11 +16,6 @@
 - 优化用户在网络中传输的 DataByteBuffer 类的结构
   > 添加了 mid, statusCode, time字段，具体请查看[DataByteBuffer](./src/main/java/com/nxt/im/common/DataByteBuffer.java)\
   > @author jon2180
-- 添加 com.nxt.im.server.Message 的单元测试
-  > @author jon2180
-- 添加了聊天界面
-  > 简易聊天页面\
-  > @author deathwing111
 - 修复了 服务端与客户端在一方断开连接后，一直输出错误报告的bug
   > @author jon2180
 - 新增消息转发的逻辑
@@ -29,6 +24,14 @@
   > @author jon2180
 - 新增通知在线好友的逻辑
   > @author jon2180
+- 添加 com.nxt.im.server.Message 的单元测试
+  > @author jon2180
+- 添加了聊天界面
+  > 简易聊天页面\
+  > @author deathwing111
+- 增加登录和注册界面的非空验证
+  > @author deathwing111
+
 
 ### 191214
 
