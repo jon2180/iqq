@@ -84,7 +84,7 @@ public class ResponseHandler implements Runnable {
       // socketChannel.read(byteBuffer);
       // DataByteBuffer data = new DataByteBuffer(byteBuffer);
       // data.getData();
-      while (socketChannel.read(byteBuffer) > 0) {
+      while (socketChannel.read(byteBuffer) > 0) {  
         /**
          * 切换buffer为读模式
          */

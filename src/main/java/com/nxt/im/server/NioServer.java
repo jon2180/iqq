@@ -28,9 +28,9 @@ public class NioServer {
    */
   private Selector selector;
 
-  private static HashMap<Integer, SocketWrapper> socketMap;
+  private static HashMap<String, SocketWrapper> socketMap;
   static {
-    socketMap = new HashMap<Integer, SocketWrapper>();
+    socketMap = new HashMap<String, SocketWrapper>();
   }
 
   /**
@@ -62,7 +62,7 @@ public class NioServer {
   /**
    * @return the socketMap
    */
-  public static HashMap<Integer, SocketWrapper> getSocketMap() {
+  public static HashMap<String, SocketWrapper> getSocketMap() {
     return socketMap;
   }
 

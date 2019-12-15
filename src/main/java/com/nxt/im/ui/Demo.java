@@ -1,6 +1,8 @@
-package com.nxt.im.client;
+package com.nxt.im.ui;
 
 // import java.io.IOException;
+
+import com.nxt.im.client.*;
 
 public class Demo {
 
