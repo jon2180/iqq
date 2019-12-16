@@ -1,17 +1,23 @@
 package com.nxt.im.ui;
 
-import com.nxt.im.common.Messages;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 // import java.awt.FlowLayout;
 // import java.awt.GridLayout;
+import com.nxt.im.common.Messages;
 
-public class ChatFrame extends JFrame {
-
+/**
+ * ChatFrame
+ *
+ * @version 191216
+ */
+public class ChatFrame {
+    // extends JFrame
     private JFrame chatFrame;
     private Container cc;
     private JButton sendbtn;
@@ -22,10 +28,13 @@ public class ChatFrame extends JFrame {
     private JScrollBar vertical;
     private JTextArea jtashow;
 
+    private String friendQQ;
+
     private JList<String> userlist;
     DefaultListModel<String> users_model;
 
-    public ChatFrame() {
+    public ChatFrame(String targetQQ) {
+        this.friendQQ = targetQQ;
         this.chatFrame = new JFrame("chat room");
         this.cc = chatFrame.getContentPane();
         this.sendbtn = new JButton("发送");
@@ -43,11 +52,55 @@ public class ChatFrame extends JFrame {
         cc.setLayout(new BorderLayout());//布局管理器
         //设置按下右上角X号后关闭
         chatFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        chatFrame.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowClosed(WindowEvent windowEvent) {
+                closeWindow();
+            }
+
+            @Override
+            public void windowIconified(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent windowEvent) {
+
+            }
+        });
         // 设置窗体可见
         chatFrame.setVisible(true);
         //初始化--往窗体里放其他控件
 
         init();
+    }
+
+    public void setChatFrameTitle(String title) {
+        this.chatFrame.setTitle(title);
+    }
+
+    public JFrame getChatFrame() {
+        return chatFrame;
     }
 
     public void init() {
@@ -120,6 +173,11 @@ public class ChatFrame extends JFrame {
         sendbtn.addActionListener(ca);
 
 
+    }
+
+    public void closeWindow() {
+        FriendsFrame.getChatMap().remove(friendQQ);
+        chatFrame.dispose();
     }
 
     public void receiveMessage(Messages message, long time) {

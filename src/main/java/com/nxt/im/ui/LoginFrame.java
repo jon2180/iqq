@@ -11,7 +11,8 @@ import java.io.Serializable;
 import java.util.Vector;
 
 //类名 loginFrame
-public class LoginFrame extends JFrame {
+public class LoginFrame {
+// extends JFrame
 
     private static final long serialVersionUID = 1L;
     private JFrame loginFrame = new JFrame("登录");
@@ -44,7 +45,7 @@ public class LoginFrame extends JFrame {
         lc.setLayout(new BorderLayout());//布局管理器
         //设置按下右上角X号后关闭
         // registerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         //初始化--往窗体里放其他控件
         init();
         //设置窗体可见
@@ -91,7 +92,7 @@ public class LoginFrame extends JFrame {
         };
         //把监听器注册到控件上
         registerbtn.addActionListener(lar);
-        setSize(900, 600);
+//        loginFrame.setSize(900, 600);
 
         ActionListener lacer = new ActionListener() {
             @Override
@@ -120,7 +121,7 @@ public class LoginFrame extends JFrame {
         };
         //把监听器注册到控件上
         certainbtn.addActionListener(lacer);
-        setSize(900, 600);
+//        loginFrame.setSize(900, 600);
 
         ActionListener lacan = new ActionListener() {
             @Override
@@ -131,7 +132,7 @@ public class LoginFrame extends JFrame {
         };
         //把监听器注册到控件上
         cancelbtn.addActionListener(lacan);
-        setSize(900, 600);
+//        loginFrame.setSize(900, 600);
 
     }
 
@@ -159,9 +160,10 @@ public class LoginFrame extends JFrame {
                     friendsVector.add((Friends) friend);
                 }
             }
-
+//            System.out.println(friendsVector.size());
+            loginFrame.dispose();
+//            loginFrame.setVisible(false);
             new FriendsFrame(friendsVector);
         }
-
     }
 }
