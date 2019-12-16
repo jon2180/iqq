@@ -8,6 +8,17 @@
 
 > 较新的在上面
 
+### 191216
+
+- 给数据库的 messages 和 friends 添加了 time 字段
+    > @author jon2180
+- 登录注册逻辑
+    > @author jon2180
+- 好友列表界面
+    > @author deathwing111
+- 配置命令字
+    > @author jon2180
+
 ### 191215
 
 - 重构了注册逻辑

@@ -1,17 +1,14 @@
 package com.nxt.im.ui;
 
-import java.awt.*;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.Serializable;
-import java.util.Scanner;
-import java.util.Vector;
-
 import com.nxt.im.client.ClientRouter;
 import com.nxt.im.common.Friends;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.util.Vector;
 
 //类名 loginFrame
 public class LoginFrame extends JFrame {
@@ -153,19 +150,17 @@ public class LoginFrame extends JFrame {
 
         // 判断一下并输出好友列表
         if (data instanceof Vector) {
+            Vector<Friends> friendsVector = new Vector<>();
             Vector friends = (Vector) data;
+
             int i = 1;
             for (Object friend : friends) {
                 if (friend instanceof Friends) {
-                    System.out.println((i++) + ": " + ((Friends) friend).getTarget_account());
+                    friendsVector.add((Friends) friend);
                 }
             }
-//            Scanner scanner = new Scanner(System.in);
-//            int index = scanner.nextInt();
-//            if (index > 0 && index <= i) {
-//                Chat c = new Chat();
-////                ClientRouter.getSocketChannel().write()
-//            }
+
+            new FriendsFrame(friendsVector);
         }
 
     }
