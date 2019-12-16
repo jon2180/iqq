@@ -12,7 +12,7 @@ import com.nxt.im.common.Accounts;
 
 /**
  * loginFrame
- * 
+ *
  * @description 注意：此类不能直接使用 new 关键字实例化，需要使用 getInstance 方法
  */
 public class RegisterFrame extends JFrame {
@@ -23,7 +23,7 @@ public class RegisterFrame extends JFrame {
     private static volatile RegisterFrame instance = null;
 
     /**
-     * @description 版本号
+     * 版本号
      */
     private static final long serialVersionUID = 1L;
 
@@ -82,7 +82,7 @@ public class RegisterFrame extends JFrame {
         /* 标题部分--North */
         JPanel titlePanel1 = new JPanel();
         titlePanel1.setLayout(new FlowLayout());
-        titlePanel1.add(new JLabel("fakeque"));
+        titlePanel1.add(new JLabel("fake-qq"));
         rc.add(titlePanel1, "North");
 
         /* 输入部分--Center */
@@ -113,7 +113,7 @@ public class RegisterFrame extends JFrame {
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // 
+                //
 
                 String nickname = String.valueOf(username.getText());
                 String pwd = String.valueOf(password.getPassword());
@@ -122,24 +122,17 @@ public class RegisterFrame extends JFrame {
 
                 Object message = "you connot input a null value!";
                 String title = "ERROR";
-                if((nickname == null || nickname.length() <= 0) || (pwd == null || pwd.length() <= 0) || (repwd == null || repwd.length() <= 0)){
-                    JOptionPane.showMessageDialog(null, message, title, 0);
-                }else{
+                if ((nickname == null || nickname.length() <= 0) || (pwd == null || pwd.length() <= 0) || (repwd == null || repwd.length() <= 0)) {
+                    JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+                } else {
                     // System.out.println(nickname + "\r\n" + pwd + "\r\n" + repwd);
                     // registerFrame.setVisible(false);
 
-                    
                     if (ClientRouter.userReg(nickname, pwd)) {
-                        registerFrame.setVisible(false);
-                        LoginFrame ft = new LoginFrame(); // 创建登录窗体
+                        System.out.println("发送成功: 注册");
                     } else {
-    
+                        System.out.println("发送失败: 注册");
                     }
-                    
-                }
-
-                if (!ClientRouter.userReg(nickname, pwd)) {
-                    return;
                 }
             }
         };
@@ -160,16 +153,17 @@ public class RegisterFrame extends JFrame {
     }
 
     public void register(int code, Accounts acnt) {
-        // 获取数据
-        this.statusCode = code;
-        this.accounts = acnt;
-
         // 展示提示信息
         System.out.println(code);
-        if (statusCode == 200) {
-            JOptionPane.showMessageDialog(new JPanel(), accounts.getQnumber(), "您的QQ账号，请牢记", JOptionPane.OK_OPTION);
+        if (code == 200) {
+            JOptionPane.showMessageDialog(new JPanel(), accounts.getQnumber(), "您的QQ账号，请牢记", JOptionPane.INFORMATION_MESSAGE);
+
+            registerFrame.setVisible(false);
+            // 创建登录窗体
+            LoginFrame ft = new LoginFrame();
+
         } else {
-            JOptionPane.showMessageDialog(new JPanel(), "注册过程出错", "错误", JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(new JPanel(), "注册过程出错", "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -19,105 +19,107 @@ import com.nxt.im.ui.RegisterFrame;
 
 /**
  * 基于NIO实现的发消息的线程类
- * 
+ *
  * @version v191204
  */
 public class ResponseHandler implements Runnable {
-  private Selector selector;
+    private Selector selector;
 
-  public ResponseHandler(Selector selector) {
-    this.selector = selector;
-  }
+    public ResponseHandler(Selector selector) {
+        this.selector = selector;
+    }
 
-  @Override
-  public void run() {
+    @Override
+    public void run() {
 
-    /**
-     * 循环等待新消息
-     */
-    while (true) {
-      try {
-        // TODO 获取可用channel数量
-        int readyChannels = selector.select();
+        // 循环等待新消息
 
-        // TODO 为什么要这样？
-        if (readyChannels == 0)
-          continue;
+        while (true) {
+            try {
+                // TODO 获取可用channel数量
+                int readyChannels = selector.select();
 
-        // 获取可用channel的集合
-        Set<SelectionKey> selectionKeys = selector.selectedKeys();
+                // TODO 为什么要这样？
+                if (readyChannels == 0)
+                    continue;
 
-        // 迭代器遍历 selectionKey 的 set
-        Iterator<SelectionKey> iterator = selectionKeys.iterator();
-        while (iterator.hasNext()) {
-          // selectionKey实例
-          SelectionKey selectionKey = iterator.next();
+                // 获取可用channel的集合
+                Set<SelectionKey> selectionKeys = selector.selectedKeys();
 
-          // [!] 移除set中的当前的selectionKey
-          iterator.remove();
+                // 迭代器遍历 selectionKey 的 set
+                Iterator<SelectionKey> iterator = selectionKeys.iterator();
+                while (iterator.hasNext()) {
+                    // selectionKey实例
+                    SelectionKey selectionKey = iterator.next();
 
-          /**
-           * 根据就绪状态来判断相应的逻辑
-           */
+                    // [!] 移除set中的当前的selectionKey
+                    iterator.remove();
 
-          // 如果是可读事件
-          if (selectionKey.isReadable()) {
-            readHandler(selectionKey, selector);
-          }
+                    // 根据就绪状态来判断相应的逻辑
+
+                    // 如果是可读事件
+                    if (selectionKey.isReadable()) {
+                        readHandler(selectionKey, selector);
+                    }
+                }
+            } catch (Exception e) {
+                break;
+            }
         }
-      } catch (Exception e) {
-        break;
-      }
     }
-  }
 
-  /**
-   * 接受服务器响应
-   */
-  public void readHandler(SelectionKey selectionKey, Selector selector) {
-    // 要从selectionKey中获取到已经就绪的channel
-    SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-
-    ByteBuffer byteBuffer = ByteBuffer.allocate(3096);
-
-    // 循环读取客户端请求信息
-
-    try {
-      socketChannel.read(byteBuffer);
-      DataByteBuffer data = new DataByteBuffer(byteBuffer);
-
-      switch (data.getUrl()) {
-      case "/user/reg": {
-        Accounts accounts = (Accounts) data.getData();
-        System.out.println(accounts.getQnumber() + " : " + accounts.getNickname());
-        RegisterFrame.getInstance().register(data.getStatusCode(), accounts);
-        break;
-      }
-      case "/user/log": {
-        // Accounts accounts = (Accounts) data.getData();
-        // System.out.println(accounts.getQnumber() + " : " + accounts.getNickname());
-        // RegisterFrame.getInstance().register(data.getStatusCode(), accounts);
-        break;
-      }
-      }
-    } catch (IOException | ClassNotFoundException ioe) {
-      ioe.printStackTrace();
-      try {
-        if (socketChannel != null)
-          socketChannel.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      return;
-    }
     /**
-     * 将channel再次注册到selector上，监听它的可读事件
+     * 接受服务器响应
      */
-    try {
-      socketChannel.register(selector, SelectionKey.OP_READ);
-    } catch (ClosedChannelException cce) {
-      cce.printStackTrace();
-      return;
+    public void readHandler(SelectionKey selectionKey, Selector selector) {
+        // 要从selectionKey中获取到已经就绪的channel
+        SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+
+        ByteBuffer byteBuffer = ByteBuffer.allocate(3096);
+
+        // 循环读取客户端请求信息
+
+        try {
+            socketChannel.read(byteBuffer);
+            DataByteBuffer data = new DataByteBuffer(byteBuffer);
+
+            int statusCode = data.getStatusCode();
+            Object object = data.getData();
+            long time = data.getTime();
+
+            switch (data.getUrl()) {
+                case "/user/reg": {
+                    Accounts account = (Accounts) object;
+                    System.out.println(time);
+                    System.out.println(statusCode);
+                    System.out.println(account.getQnumber() + " : " + account.getNickname());
+                    RegisterFrame.getInstance().register(statusCode, account);
+                    break;
+                }
+                case "/user/log": {
+                    // Accounts accounts = (Accounts) data.getData();
+                    // System.out.println(accounts.getQnumber() + " : " + accounts.getNickname());
+                    // RegisterFrame.getInstance().register(data.getStatusCode(), accounts);
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException ioe) {
+            ioe.printStackTrace();
+            try {
+                socketChannel.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        /**
+         * 将channel再次注册到selector上，监听它的可读事件
+         */
+        try {
+            socketChannel.register(selector, SelectionKey.OP_READ);
+        } catch (ClosedChannelException cce) {
+            cce.printStackTrace();
+            return;
+        }
     }
-  }
 }
