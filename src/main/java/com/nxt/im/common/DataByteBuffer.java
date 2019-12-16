@@ -61,6 +61,8 @@ public class DataByteBuffer implements Serializable {
         this.url = dataByteBuffer.url;
         this.data = dataByteBuffer.data;
         this.type = dataByteBuffer.type;
+        this.statusCode = dataByteBuffer.statusCode;
+        this.mid = dataByteBuffer.mid;
         this.time = System.currentTimeMillis();
     }
 
