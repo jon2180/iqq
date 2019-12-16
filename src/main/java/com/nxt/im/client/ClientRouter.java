@@ -24,6 +24,10 @@ public class ClientRouter {
         return client.getSocketChannel();
     }
 
+    public static ClientSocket getClient() {
+        return client;
+    }
+
     /**
      * 注册
      *

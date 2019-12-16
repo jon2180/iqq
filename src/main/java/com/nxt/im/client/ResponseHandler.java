@@ -15,8 +15,11 @@ import java.util.Set;
 
 import com.nxt.im.common.Accounts;
 import com.nxt.im.common.DataByteBuffer;
+import com.nxt.im.common.Friends;
 import com.nxt.im.common.Messages;
 import com.nxt.im.config.CommandCode;
+import com.nxt.im.server.Message;
+import com.nxt.im.ui.FriendsFrame;
 import com.nxt.im.ui.LoginFrame;
 import com.nxt.im.ui.RegisterFrame;
 
@@ -108,6 +111,12 @@ public class ResponseHandler implements Runnable {
                     Messages message = (Messages) object;
                     System.out.println(message.getOrigin_account() + "  " + time);
                     System.out.println(message.getContent());
+                    // 调用方式是把 （String myQQ, Messages message, long time)
+                    FriendsFrame.displayMessage(message.getTarget_account(), message, time);
+                    break;
+                }
+                case CommandCode.NOTIFY_ONLINE: {
+                    System.out.println((String) object);
                     break;
                 }
                 default:

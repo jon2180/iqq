@@ -175,12 +175,16 @@ public class Router {
         Messages message = (Messages) dataBuf.getData();
 
         String friendQQ = message.getTarget_account();
-        String content = message.getContent();
+//        String content = message.getContent();
 
         if (NioServer.getSocketMap().containsKey(friendQQ)) {
             try {
-                // TODO 发送消息
-                NioServer.getSocketMap().get(friendQQ).getChannel().write(dataBuf.toByteBuffer());
+                if (NioServer.getSocketMap().get(friendQQ).getChannel() == null || !NioServer.getSocketMap().get(friendQQ).getChannel().isOpen()) {
+                    NioServer.getSocketMap().remove(friendQQ);
+                } else {
+                    // TODO 发送消息
+                    NioServer.getSocketMap().get(friendQQ).getChannel().write(dataBuf.toByteBuffer());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

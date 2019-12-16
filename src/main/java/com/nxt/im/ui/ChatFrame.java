@@ -6,9 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 // import java.awt.FlowLayout;
 // import java.awt.GridLayout;
+import com.nxt.im.client.ClientRouter;
 import com.nxt.im.common.Messages;
 
 /**
@@ -29,13 +32,15 @@ public class ChatFrame {
     private JTextArea jtashow;
 
     private String friendQQ;
+    private String myQQ;
 
-    private JList<String> userlist;
-    DefaultListModel<String> users_model;
+//    private JList<String> userlist;
+//    DefaultListModel<String> users_model;
 
-    public ChatFrame(String targetQQ) {
+    public ChatFrame(String myQQ, String targetQQ) {
+        this.myQQ = myQQ;
         this.friendQQ = targetQQ;
-        this.chatFrame = new JFrame("chat room");
+        this.chatFrame = new JFrame("fake-QQ");
         this.cc = chatFrame.getContentPane();
         this.sendbtn = new JButton("发送");
         this.jta = new JTextArea(15, 35);
@@ -44,7 +49,6 @@ public class ChatFrame {
         this.textScrollPane = new JScrollPane();
         this.vertical = new JScrollBar(JScrollBar.VERTICAL);
         this.jtashow = new JTextArea(20, 35);
-        //this.friendsbtn = new JButton();
 
         //设置窗体的位置及大小
         chatFrame.setBounds(500, 100, 600, 500);
@@ -107,18 +111,12 @@ public class ChatFrame {
         /*标题部分--North*/
         JPanel titlePanel1 = new JPanel();
         titlePanel1.setLayout(new FlowLayout());
-        titlePanel1.add(new JLabel("fakeque"));
+        titlePanel1.add(new JLabel("Chatting with " + friendQQ));
         cc.add(titlePanel1, "North");
 
         /*输入部分--Center*/
         JPanel fieldPanel = new JPanel();
-        //fieldPanel.setLayout(null);
         fieldPanel.add(jtf);
-        // msgArea.setEditable(false);
-        // textScrollPane.setViewportView(msgArea);
-        // vertical.setAutoscrolls(true);
-        // textScrollPane.setVerticalScrollBar(vertical);
-        // fieldPanel.add(msgArea);
         cc.add(fieldPanel);
 
         JPanel textPanel = new JPanel();
@@ -130,27 +128,6 @@ public class ChatFrame {
         textPanel.add(jta);
         cc.add(textPanel);
 
-        // users_model = new DefaultListModel<>();
-        // userlist = new JList<>(users_model);
-        // JScrollPane userListPane = new JScrollPane(userlist);
-
-        // JScrollPane userPane = new JScrollPane();
-        // userPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        // for(int i=0;i<10;i++)
-        // {
-        // 	String friend_name = nameStd[i];
-        //     friendsbtn = new JButton(friend_name);
-        //     friendsbtn.setPreferredSize(new Dimension(200,50));
-        //     friendsbtn.setLocation(200*i, 50*i);
-        //     userPane = new JScrollPane(friendsbtn);
-        //     JPanel userPanel = new JPanel();
-        //     userPanel.add(userPane,"West");
-        //     cc.add(userPanel);
-        // }
-        // userPanel.add(userListPane, "West");
-        // cc.add(userPanel,"West");
-        // JPanel textPanel = new JPanel();
-        // textPanel.add(jta,"Center");
         /*按钮部分--South*/
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
@@ -162,17 +139,23 @@ public class ChatFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String content = jta.getText();
-                String uname = "username";
-                String time = "time+";
-                System.out.println(content);
-                jtashow.append(time + uname + ":\r\n" + content + "\r\n");
+                if (content.length() < 1) {
+                    return;
+                }
+                long time = System.currentTimeMillis();
+//                System.out.println(content);
+                jtashow.append(myQQ + "  " + formatTimestamp(time) + "\r\n" + content + "\r\n");
                 jtashow.setLineWrap(true);
                 jta.setText("");
+
+                try {
+                    ClientRouter.getClient().send(new Messages(myQQ, friendQQ, content, 0));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         };
         sendbtn.addActionListener(ca);
-
-
     }
 
     public void closeWindow() {
@@ -180,9 +163,25 @@ public class ChatFrame {
         chatFrame.dispose();
     }
 
+    /**
+     * 格式化时间戳
+     *
+     * @param timestamp 时间戳 十三位
+     * @return 格式化后的时间戳
+     */
+    public String formatTimestamp(long timestamp) {
+        return new SimpleDateFormat("MM/dd HH:mm").format(timestamp);
+    }
+
+    /**
+     * 显示消息到聊天窗口
+     * 注意：这里的 message.getOrigin_account() 是消息发送方
+     *
+     * @param message Messages对象
+     * @param time    时间戳
+     */
     public void receiveMessage(Messages message, long time) {
-//        System.out.println(content);
-        jtashow.append(message.getOrigin_account() + "  " + time + ":\r\n" + message.getContent() + "\r\n");
+        jtashow.append(message.getOrigin_account() + "  " + formatTimestamp(time) + ":\r\n" + message.getContent() + "\r\n");
         jtashow.setLineWrap(true);
         jta.setText("");
     }

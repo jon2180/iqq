@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
+import com.nxt.im.common.DataByteBuffer;
 import com.nxt.im.common.Friends;
+import com.nxt.im.config.CommandCode;
 import com.nxt.im.db.DatabaseConnection;
 
 public class SocketWrapper {
@@ -101,8 +103,11 @@ public class SocketWrapper {
             if (map.containsKey(friend.getTarget_account())) {
                 try {
                     channel = map.get(friend.getTarget_account()).getChannel();
-                    if (channel != null) {
-                        channel.write(Message.encode(qq + "上线了"));
+                    if (channel != null && channel.isOpen()) {
+                        DataByteBuffer data = new DataByteBuffer(CommandCode.NOTIFY_ONLINE, qq + "上线了");
+                        data.setType("String");
+                        data.setStatusCode(200);
+                        channel.write(data.toByteBuffer());
                     } else {
                         map.remove(qq);
                     }

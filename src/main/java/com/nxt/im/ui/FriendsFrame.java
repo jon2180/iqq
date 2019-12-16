@@ -25,6 +25,8 @@ public class FriendsFrame {
 //    private JScrollPane jsp;
     private static HashMap<String, ChatFrame> chatMap;
 
+    private String myQQ;
+
     Vector<Friends> friends = null;
 
     static {
@@ -37,8 +39,6 @@ public class FriendsFrame {
 
     public FriendsFrame(Vector<Friends> friends) {
         friendsFrame = new JFrame("好友列表");
-//        this.fc = friendsFrame.getContentPane();
-//        friendsFrame.setLayout(null);
         friendsFrame.setLayout(new FlowLayout());
         friendsFrame.setTitle("好友列表");
         friendsFrame.setSize(260, 600);
@@ -61,6 +61,7 @@ public class FriendsFrame {
         JPanel userPanel = new JPanel();
         int i = 0;
         for (Friends friend : friends) {
+            myQQ = friend.getOrigin_account();
             String friendQQ = friend.getTarget_account();
             JButton friendsBtn = new JButton(friendQQ);
             friendsBtn.setPreferredSize(new Dimension(200, 50));
@@ -68,18 +69,9 @@ public class FriendsFrame {
             friendsBtn.addActionListener(e -> {
                 // 如果还没有打开聊天页面，则打开聊天页面
                 if (!FriendsFrame.chatMap.containsKey(friendQQ)) {
-                    ChatFrame chatFrame = new ChatFrame(friendQQ);
+                    ChatFrame chatFrame = new ChatFrame(myQQ, friendQQ);
                     FriendsFrame.chatMap.put(friendQQ, chatFrame);
-//                    Messages message = new Messages(friendQQ, "1234567", "发送第一条消息", 1);
-//                message.setId(1);
-//                message.setOrigin_account(friendQQ);
-//                message.setTarget_account("1234567");
-//                message.setContent("发送第一条消息");
-//                message.setType(1);
-//                    FriendsFrame.displayMessage(message);
                 }
-                // 否则用于自己去找对应的聊天窗口
-//                FriendsFrame.chatMap.get(friendQQ).getChatFrame();
 
             });
             userPanel.add(friendsBtn);
@@ -92,18 +84,21 @@ public class FriendsFrame {
         friendsFrame.getContentPane().add(userPane, "East");
     }
 
-    public static void displayMessage(Messages message) {
-        String friendQQ = message.getTarget_account();
-        if (FriendsFrame.chatMap.containsKey(friendQQ)) {
-            FriendsFrame.chatMap.get(friendQQ).receiveMessage(message, 1576482028);
+    /**
+     * 接收来自其他用户的消息，注意：消息的 target_account 是自己，origin_account 是消息发送方
+     * @param myQQ 客户qq号
+     * @param message 消息对象
+     * @param time 时间戳（精确到毫秒）
+     */
+    public static void displayMessage(String myQQ, Messages message, long time) {
+        String friendQQ = message.getOrigin_account();
+        if (!FriendsFrame.chatMap.containsKey(friendQQ)) {
+            ChatFrame chatFrame = new ChatFrame(myQQ, friendQQ);
+            chatFrame.receiveMessage(message, time);
+            FriendsFrame.chatMap.put(friendQQ, chatFrame);
+        } else {
+            FriendsFrame.chatMap.get(friendQQ).receiveMessage(message, time);
         }
-//        if (!FriendsFrame.chatMap.containsKey(friendQQ)) {
-//            ChatFrame chatFrame = new ChatFrame(friendQQ);
-//            chatFrame.receiveMessage(message, 1576482028);
-//            FriendsFrame.chatMap.put(friendQQ, chatFrame);
-//        } else {
-//            FriendsFrame.chatMap.get(friendQQ).receiveMessage(message, 1576482028);
-//        }
     }
 
     public static void main(String[] args) {

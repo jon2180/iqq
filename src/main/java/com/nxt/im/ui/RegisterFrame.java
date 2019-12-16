@@ -15,7 +15,8 @@ import com.nxt.im.common.Accounts;
  *
  * @description 注意：此类不能直接使用 new 关键字实例化，需要使用 getInstance 方法
  */
-public class RegisterFrame extends JFrame {
+public class RegisterFrame {
+//     extends JFrame
 
     /**
      * 提供单例模式实现，一个程序只有一个此界面
@@ -33,10 +34,10 @@ public class RegisterFrame extends JFrame {
     private JTextField username;
     private JLabel a2;
     private JPasswordField password;
-    private JPasswordField repassword;
+    private JPasswordField rePassword;
     private JLabel a3;
-    private JButton certainbtn;
-    private JButton cancelbtn;
+    private JButton certainBtn;
+    private JButton cancelBtn;
 
     private Accounts accounts;
     private int statusCode;
@@ -59,10 +60,10 @@ public class RegisterFrame extends JFrame {
         this.username = new JTextField();
         this.a2 = new JLabel("密   码");
         this.password = new JPasswordField();
-        this.repassword = new JPasswordField();
+        this.rePassword = new JPasswordField();
         this.a3 = new JLabel("确认密码");
-        this.certainbtn = new JButton("确定");
-        this.cancelbtn = new JButton("取消");
+        this.certainBtn = new JButton("确定");
+        this.cancelBtn = new JButton("取消");
 
         // 设置窗体的位置及大小
         registerFrame.setBounds(700, 300, 400, 300);
@@ -96,17 +97,17 @@ public class RegisterFrame extends JFrame {
         fieldPanel1.add(a3);
         username.setBounds(110, 20, 120, 20);
         password.setBounds(110, 60, 120, 20);
-        repassword.setBounds(110, 100, 120, 20);
+        rePassword.setBounds(110, 100, 120, 20);
         fieldPanel1.add(username);
         fieldPanel1.add(password);
-        fieldPanel1.add(repassword);
+        fieldPanel1.add(rePassword);
         rc.add(fieldPanel1, "Center");
 
         /* 按钮部分--South */
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
-        buttonPanel.add(certainbtn);
-        buttonPanel.add(cancelbtn);
+        buttonPanel.add(certainBtn);
+        buttonPanel.add(cancelBtn);
         rc.add(buttonPanel, "South");
 
         // 创建 确定按钮 监听器对象
@@ -117,7 +118,7 @@ public class RegisterFrame extends JFrame {
 
                 String nickname = String.valueOf(username.getText());
                 String pwd = String.valueOf(password.getPassword());
-                String repwd = String.valueOf(repassword.getPassword());
+                String repwd = String.valueOf(rePassword.getPassword());
 
 
                 Object message = "you connot input a null value!";
@@ -136,7 +137,7 @@ public class RegisterFrame extends JFrame {
                 }
             }
         };
-        certainbtn.addActionListener(actionListener);
+        certainBtn.addActionListener(actionListener);
 
         // 创建 取消按钮 监听器对象
         ActionListener racan = new ActionListener() {
@@ -144,11 +145,11 @@ public class RegisterFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 username.setText("");
                 password.setText("");
-                repassword.setText("");
+                rePassword.setText("");
             }
         };
         // 把监听器注册到控件上
-        cancelbtn.addActionListener(racan);
+        cancelBtn.addActionListener(racan);
 
     }
 
