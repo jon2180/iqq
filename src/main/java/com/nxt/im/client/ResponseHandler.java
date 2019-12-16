@@ -15,6 +15,9 @@ import java.util.Set;
 
 import com.nxt.im.common.Accounts;
 import com.nxt.im.common.DataByteBuffer;
+import com.nxt.im.common.Messages;
+import com.nxt.im.config.CommandCode;
+import com.nxt.im.ui.LoginFrame;
 import com.nxt.im.ui.RegisterFrame;
 
 /**
@@ -86,9 +89,10 @@ public class ResponseHandler implements Runnable {
             int statusCode = data.getStatusCode();
             Object object = data.getData();
             long time = data.getTime();
+            String type = data.getType();
 
             switch (data.getUrl()) {
-                case "/user/reg": {
+                case CommandCode.REG: {
                     Accounts account = (Accounts) object;
                     System.out.println(time);
                     System.out.println(statusCode);
@@ -96,12 +100,18 @@ public class ResponseHandler implements Runnable {
                     RegisterFrame.getInstance().register(statusCode, account);
                     break;
                 }
-                case "/user/log": {
-                    // Accounts accounts = (Accounts) data.getData();
-                    // System.out.println(accounts.getQnumber() + " : " + accounts.getNickname());
-                    // RegisterFrame.getInstance().register(data.getStatusCode(), accounts);
+                case CommandCode.LOG_IN: {
+                    LoginFrame.getInstance().login(statusCode, type, data.getData());
                     break;
                 }
+                case CommandCode.SEND_MESSAGE: {
+                    Messages message = (Messages) object;
+                    System.out.println(message.getOrigin_account() + "  " + time);
+                    System.out.println(message.getContent());
+                    break;
+                }
+                default:
+                    System.out.println("暂无此url选项");
             }
         } catch (IOException | ClassNotFoundException ioe) {
             ioe.printStackTrace();
@@ -112,14 +122,13 @@ public class ResponseHandler implements Runnable {
             }
             return;
         }
-        /**
+        /*
          * 将channel再次注册到selector上，监听它的可读事件
          */
         try {
             socketChannel.register(selector, SelectionKey.OP_READ);
         } catch (ClosedChannelException cce) {
             cce.printStackTrace();
-            return;
         }
     }
 }

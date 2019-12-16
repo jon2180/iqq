@@ -1,5 +1,9 @@
 package com.nxt.im.client;
 
+import com.nxt.im.common.DataByteBuffer;
+import com.nxt.im.common.Messages;
+import com.nxt.im.config.CommandCode;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -43,13 +47,17 @@ public class ClientSocket {
          */
         Thread thread = new Thread(new ResponseHandler(selector));
         thread.start();
-
-        // isConnected = true;
     }
 
-    public void send(String str) throws IOException {
-        if (str != null && str.length() > 0) {
-            socketChannel.write(StandardCharsets.UTF_8.encode(str));
+    public SocketChannel getSocketChannel() {
+        return socketChannel;
+    }
+
+    public void send(Messages message) throws IOException {
+        if (message != null) {
+            DataByteBuffer data = new DataByteBuffer(CommandCode.SEND_MESSAGE, message);
+            data.setStatusCode(200);
+            send(data.toByteBuffer());
         }
     }
 

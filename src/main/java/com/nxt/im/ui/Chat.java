@@ -1,5 +1,7 @@
 package com.nxt.im.ui;
 
+import com.nxt.im.common.Messages;
+
 import java.awt.*;
 
 import java.awt.event.ActionEvent;
@@ -92,4 +94,12 @@ public class Chat extends JFrame {
         };
         sendbtn.addActionListener(ca);
     }
+
+    public void receiveMessage(Messages message, long time) {
+//        System.out.println(content);
+        jtashow.append(message.getOrigin_account() + "  " + time + ":\r\n" + message.getContent() + "\r\n");
+        jtashow.setLineWrap(true);
+        jta.setText("");
+    }
+
 }

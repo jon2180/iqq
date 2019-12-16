@@ -4,8 +4,12 @@ import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.util.Scanner;
+import java.util.Vector;
 
 import com.nxt.im.client.ClientRouter;
+import com.nxt.im.common.Friends;
 
 import javax.swing.*;
 
@@ -23,7 +27,18 @@ public class LoginFrame extends JFrame {
     private JButton cancelbtn = new JButton("取消");
     private JButton registerbtn = new JButton("注册");
 
-    public LoginFrame() {
+    private static volatile LoginFrame instance = null;
+
+    public static LoginFrame getInstance() {
+        if (instance == null) {
+            synchronized (RegisterFrame.class) {
+                instance = new LoginFrame();
+            }
+        }
+        return instance;
+    }
+
+    private LoginFrame() {
         //设置窗体的位置及大小
         loginFrame.setBounds(600, 200, 300, 220);
         // registerFrame.setBounds(700, 300, 400, 300);
@@ -95,16 +110,13 @@ public class LoginFrame extends JFrame {
                     try {
                         if (ClientRouter.userLog(qnum, pwd)) {
                             System.out.println("已经成功递交登录请求。。");
-
                         } else {
                             System.out.println("请求失败。");
                         }
-                        // Login loginObj = new Login(qnum,pwd);
-                        // loginObj.lisent();
+
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
-                    // System.out.println(qnum+ " " +pwd);
                 }
 
             }
@@ -123,6 +135,38 @@ public class LoginFrame extends JFrame {
         //把监听器注册到控件上
         cancelbtn.addActionListener(lacan);
         setSize(900, 600);
+
+    }
+
+    public void login(int code, String type, Serializable data) {
+        System.out.println(code);
+        System.out.println(type);
+
+        if (code != 200 && type.equals("String")) {
+            JOptionPane.showMessageDialog(new JPanel(), (String) data, "错误", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (code != 200 || !type.equals("Vector<Friends>")) {
+            JOptionPane.showMessageDialog(new JPanel(), (String) data, "错误", JOptionPane.WARNING_MESSAGE);
+        }
+
+        // 判断一下并输出好友列表
+        if (data instanceof Vector) {
+            Vector friends = (Vector) data;
+            int i = 1;
+            for (Object friend : friends) {
+                if (friend instanceof Friends) {
+                    System.out.println((i++) + ": " + ((Friends) friend).getTarget_account());
+                }
+            }
+//            Scanner scanner = new Scanner(System.in);
+//            int index = scanner.nextInt();
+//            if (index > 0 && index <= i) {
+//                Chat c = new Chat();
+////                ClientRouter.getSocketChannel().write()
+//            }
+        }
 
     }
 }

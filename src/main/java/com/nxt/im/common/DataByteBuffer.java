@@ -48,8 +48,9 @@ public class DataByteBuffer implements Serializable {
 
     /**
      * 消息类型 - 类似于 http 中的 Content-Type 字段
+     * "Accounts", "Messages", "String", "Vector<Friends>", "Friends"
      */
-    private String type = "serial-data";
+    private String type = "String";
 
     /**
      * 消息建立的时间戳
@@ -70,6 +71,13 @@ public class DataByteBuffer implements Serializable {
         this.url = url;
         this.data = data;
         this.type = "serial-data";
+        this.time = System.currentTimeMillis();
+    }
+
+    public DataByteBuffer(String url, String type, Serializable data) {
+        this.url = url;
+        this.data = data;
+        this.type = type;
         this.time = System.currentTimeMillis();
     }
 
@@ -121,6 +129,10 @@ public class DataByteBuffer implements Serializable {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public Serializable getData() {

@@ -37,8 +37,8 @@ public class Messages implements Serializable {
      */
     private int type;
 
-    public Messages(int id, String qq, String friendQQ, String content, int type) {
-        this.id = id;
+    public Messages(String qq, String friendQQ, String content, int type) {
+//        this.id = id;
         this.origin_account = qq;
         this.target_account = friendQQ;
         this.content = content;

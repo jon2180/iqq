@@ -12,6 +12,7 @@ import com.nxt.im.common.Accounts;
 import com.nxt.im.common.DataByteBuffer;
 import com.nxt.im.common.Friends;
 import com.nxt.im.common.Messages;
+import com.nxt.im.config.CommandCode;
 import com.nxt.im.db.DatabaseConnection;
 
 /**
@@ -40,12 +41,14 @@ public class Router {
             dataByteBuffer = new DataByteBuffer(byteBuffer);
             String url = dataByteBuffer.getUrl();
             switch (url) {
-                case "/user/reg":
+                case CommandCode.REG:
                     registerUser(socketChannel, (Accounts) dataByteBuffer.getData());
                     break;
-                case "/user/login":
+                case CommandCode.LOG_IN:
                     loginCheck(socketChannel, (Accounts) dataByteBuffer.getData());
                     break;
+                case CommandCode.SEND_MESSAGE:
+                    sendMessage(dataByteBuffer);
             }
         } catch (ClassNotFoundException | IOException e) {
             System.out.println("in Router.dispatch");
@@ -86,18 +89,14 @@ public class Router {
 
             // 把账户返回给客户端
             account.setQnumber(qq);
-            DataByteBuffer data = new DataByteBuffer("/user/reg", account);
+            DataByteBuffer data = new DataByteBuffer(CommandCode.REG, account);
             data.setStatusCode(200);
-            System.out.println(data.getStatusCode());
 
             System.out.println("注册成功：" + qq + ":" + nickname);
 
-            DataByteBuffer tmp = new DataByteBuffer(data.toByteBuffer());
-            System.out.println(tmp.getStatusCode());
-
             socketChannel.write(data.toByteBuffer());
 
-        } catch (IOException | SQLException | ClassNotFoundException ioE) {
+        } catch (IOException | SQLException ioE) {
             ioE.printStackTrace();
         }
     }
@@ -115,10 +114,14 @@ public class Router {
             resultSet = dbConnection.query(sql);
 
             // x 账户不存在
-            if (resultSet.next()) {
+            if (!resultSet.next()) {
                 System.out.println("无此用户");
-                String msg = "10002";
-                socketChannel.write(Message.encode(msg));
+
+                DataByteBuffer data = new DataByteBuffer(CommandCode.LOG_IN, "无此用户");
+                data.setStatusCode(401);
+
+                data.setType("String");
+                socketChannel.write(data.toByteBuffer());
                 return;
             }
 
@@ -128,8 +131,12 @@ public class Router {
             System.out.println("realPassword:" + realPassword);
 
             // x 登录账户与密码不匹配
-            if (realPassword.equals(password)) {
+            if (!realPassword.equals(password)) {
                 System.out.println("登录失败，密码错误");
+                DataByteBuffer data = new DataByteBuffer(CommandCode.LOG_IN, "登录密码错误");
+                data.setStatusCode(401);
+                data.setType("String");
+                socketChannel.write(data.toByteBuffer());
                 return;
             }
 
@@ -147,8 +154,12 @@ public class Router {
                 SocketWrapper.notifyAllFriends(qnumber, friends);
             }
 
+            DataByteBuffer data = new DataByteBuffer(CommandCode.LOG_IN, friends);
+            data.setType("Vector<Friends>");
+            data.setStatusCode(200);
+
             // TODO 发送消息给客户端：好友列表
-            socketChannel.write(new DataByteBuffer("/user/friends", friends).toByteBuffer());
+            socketChannel.write(data.toByteBuffer());
         } catch (IOException | SQLException ioE) {
             ioE.printStackTrace();
         }
@@ -169,7 +180,7 @@ public class Router {
         if (NioServer.getSocketMap().containsKey(friendQQ)) {
             try {
                 // TODO 发送消息
-                NioServer.getSocketMap().get(friendQQ).getChannel().write(Message.encode(content));
+                NioServer.getSocketMap().get(friendQQ).getChannel().write(dataBuf.toByteBuffer());
             } catch (IOException e) {
                 e.printStackTrace();
             }

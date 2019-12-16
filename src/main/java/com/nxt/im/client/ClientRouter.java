@@ -1,9 +1,12 @@
 package com.nxt.im.client;
 
 import java.io.IOException;
+import java.net.Socket;
+import java.nio.channels.SocketChannel;
 
 import com.nxt.im.common.Accounts;
 import com.nxt.im.common.DataByteBuffer;
+import com.nxt.im.config.CommandCode;
 
 public class ClientRouter {
 
@@ -17,6 +20,10 @@ public class ClientRouter {
         }
     }
 
+    public static SocketChannel getSocketChannel() {
+        return client.getSocketChannel();
+    }
+
     /**
      * 注册
      *
@@ -28,7 +35,7 @@ public class ClientRouter {
         Accounts account = new Accounts();
         account.setNickname(nickname);
         account.setPassword(password);
-        DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/reg", account);
+        DataByteBuffer dataByteBuffer = new DataByteBuffer(CommandCode.REG, account);
         try {
             ClientRouter.client.send(dataByteBuffer.toByteBuffer());
             return true;
@@ -50,7 +57,7 @@ public class ClientRouter {
         account.setQnumber(qnumber);
         account.setPassword(password);
 
-        DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/login", account);
+        DataByteBuffer dataByteBuffer = new DataByteBuffer(CommandCode.LOG_IN, account);
         dataByteBuffer.setType("json");
 
         try {

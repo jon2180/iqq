@@ -160,7 +160,7 @@ public class RegisterFrame extends JFrame {
 
             registerFrame.setVisible(false);
             // 创建登录窗体
-            LoginFrame ft = new LoginFrame();
+            LoginFrame ft = LoginFrame.getInstance();
 
         } else {
             JOptionPane.showMessageDialog(new JPanel(), "注册过程出错", "错误", JOptionPane.ERROR_MESSAGE);
