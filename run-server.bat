@@ -1,1 +1,1 @@
-@call .\run.bat com.nxt.im.Server
+@call .\run.bat Server

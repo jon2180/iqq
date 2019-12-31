@@ -1,8 +1,6 @@
 # fake-qq
 
-<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/jon2180/fake-qq/Java CI">
-
-<img alt="GitHub" src="https://img.shields.io/github/license/jon2180/fake-qq">
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/jon2180/fake-qq/Java CI"><img alt="GitHub" src="https://img.shields.io/github/license/jon2180/fake-qq">
 
 ## Changelog更改日志
 
@@ -27,7 +25,7 @@
   > 现以QQ号作为索引键\
   > @author jon2180
 - 优化用户在网络中传输的 DataByteBuffer 类的结构
-  > 添加了 mid, statusCode, time字段，具体请查看[DataByteBuffer](./src/main/java/com/nxt/im/common/DataByteBuffer.java)\
+  > 添加了 mid, statusCode, time字段，具体请查看[DataByteBuffer](src/main/java/me/im/common/DataByteBuffer.java)\
   > @author jon2180
 - 修复了 服务端与客户端在一方断开连接后，一直输出错误报告的bug
   > @author jon2180
@@ -37,7 +35,7 @@
   > @author jon2180
 - 新增通知在线好友的逻辑
   > @author jon2180
-- 添加 com.nxt.im.server.Message 的单元测试
+- 添加 Message 的单元测试
   > @author jon2180
 - 添加了聊天界面
   > 简易聊天页面\
@@ -70,15 +68,15 @@
 
 ### 191211
 
-- 设置路由的分发类(com.nxt.im.server.Router) 
+- 设置路由的分发类(Router) 
   > 主要功能是分发用户的不同请求给相应的处理方法，结构有待优化\
   > @author jon2180
-- 设置socket的包装器类 (com.nxt.im.server.SocketWrapper) 
+- 设置socket的包装器类 (SocketWrapper) 
   > 主要功能是用于作为 HashMap 的值，方便找到该用户所连接的SocketChannel对象，结构有待优化\
   > @author jon2180
 - 连接上了数据库
-  > [建表Sql](./sql/v191208.1.sql)\
-  > [数据库连接配置](./src/main/java/com/nxt/im/config/Database.java)\
+  > [建表Sql](./sql/v191216.sql)\
+  > [数据库连接配置](src/main/java/me/im/server/config/Database.java)\
   > @author jon2180
 
 ### 191210
@@ -143,7 +141,7 @@ java <package-name>
 > @update 2019-12-10 17:05\
 > @description 描述前后端通信的方式
 
-当存在消息时，消息需要被包装成一个 `com.nxt.im.common.DataByteBuffer` 对象，
+当存在消息时，消息需要被包装成一个 `DataByteBuffer` 对象，
 
 DataByteBuffer 存在两个构造函数，注意的是调用需要捕捉抛出的错误
 
