@@ -1,14 +1,12 @@
 package me.im.client.ui;
 
-import java.awt.*;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-
 import me.im.client.socket.ClientRouter;
 import me.im.common.protocol.Accounts;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * loginFrame

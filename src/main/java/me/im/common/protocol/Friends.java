@@ -5,8 +5,9 @@ import java.io.Serializable;
 /**
  * 朋友关系表的字段映射
  *
+ * <p>类名与数据库字段名一致。类中每一个属性都对应一个数据表的字段。实现 Serializable 是为了可以在网络流中传输对象。</p>
+ *
  * @version v191208
- * @Description 类名与数据库字段名一致。类中每一个属性都对应一个数据表的字段。实现 Serializable 是为了可以在网络流中传输对象。
  */
 public class Friends implements Serializable {
 

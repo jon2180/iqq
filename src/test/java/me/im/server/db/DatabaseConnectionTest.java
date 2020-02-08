@@ -1,5 +1,7 @@
 package me.im.server.db;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.ResultSet;
@@ -11,7 +13,7 @@ public class DatabaseConnectionTest {
 
     DatabaseConnection dbConn = null;
 
-    @Test
+    @Before
     public void testDatabaseConnection() {
         dbConn = new DatabaseConnection();
     }
@@ -29,15 +31,4 @@ public class DatabaseConnectionTest {
             fail();
         }
     }
-
-    @Test
-    public void testUpdate() {
-        try {
-            dbConn.update("update accounts ");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
-
 }

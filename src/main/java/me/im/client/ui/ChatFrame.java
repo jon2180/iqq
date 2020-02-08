@@ -1,5 +1,8 @@
 package me.im.client.ui;
 
+import me.im.client.socket.ClientRouter;
+import me.im.common.protocol.Messages;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,8 +14,6 @@ import java.text.SimpleDateFormat;
 
 // import java.awt.FlowLayout;
 // import java.awt.GridLayout;
-import me.im.client.socket.ClientRouter;
-import me.im.common.protocol.Messages;
 
 /**
  * ChatFrame

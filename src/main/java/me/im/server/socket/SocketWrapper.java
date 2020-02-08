@@ -1,5 +1,10 @@
 package me.im.server.socket;
 
+import me.im.common.protocol.DataByteBuffer;
+import me.im.common.protocol.Friends;
+import me.im.common.utils.CommandCode;
+import me.im.server.db.DatabaseConnection;
+
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.sql.ResultSet;
@@ -7,11 +12,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
-
-import me.im.common.protocol.DataByteBuffer;
-import me.im.common.protocol.Friends;
-import me.im.common.utils.CommandCode;
-import me.im.server.db.DatabaseConnection;
 
 public class SocketWrapper {
     /**

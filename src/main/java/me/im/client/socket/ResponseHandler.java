@@ -1,25 +1,26 @@
 package me.im.client.socket;
 
-import java.nio.channels.Selector;
-import java.io.IOException;
-// import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
-import java.nio.channels.SelectionKey;
-// import java.nio.channels.Selector;
-// import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-// import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.Set;
-
+import me.im.client.ui.FriendsFrame;
+import me.im.client.ui.LoginFrame;
+import me.im.client.ui.RegisterFrame;
 import me.im.common.protocol.Accounts;
 import me.im.common.protocol.DataByteBuffer;
 import me.im.common.protocol.Messages;
 import me.im.common.utils.CommandCode;
-import me.im.client.ui.FriendsFrame;
-import me.im.client.ui.LoginFrame;
-import me.im.client.ui.RegisterFrame;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+import java.util.Set;
+
+// import java.net.InetSocketAddress;
+// import java.nio.channels.Selector;
+// import java.nio.channels.ServerSocketChannel;
+// import java.nio.charset.Charset;
 
 /**
  * 基于NIO实现的发消息的线程类

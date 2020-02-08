@@ -1,12 +1,8 @@
 package me.im.server.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import me.im.server.config.Database;
+
+import java.sql.*;
 
 /**
  * 连接数据库，包装查询语句，执行查询
