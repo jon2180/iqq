@@ -1,4 +1,6 @@
 
+> 以下内容已不适用与最新版，之后抽空更新
+
 ## 开发备注文档
 
 ### C/S 通信方式
@@ -11,19 +13,21 @@
 DataByteBuffer 存在两个构造函数，注意的是调用需要捕捉抛出的错误
 
 ```java
-
-/**
- * 发送消息时使用，把数据转换为 ByteBuffer 发送
- * url 的功能类似 http 的 url, obj 即为数据
- */
-DataByteBuffer(String url, Serializable obj);
-
-/**
- * 接收消息时使用
- * 接收到 ByteBuffer 消息后使用此方法构造出对象
- */
-DataByteBuffer(ByteBuffer byteBuffer);
-
+class DataByteBuffer {
+    /**
+     * 发送消息时使用，把数据转换为 ByteBuffer 发送
+     * url 的功能类似 http 的 url, obj 即为数据
+     */
+    DataByteBuffer(String url, Serializable obj) {
+    }
+    
+    /**
+     * 接收消息时使用
+     * 接收到 ByteBuffer 消息后使用此方法构造出对象
+     */
+    DataByteBuffer(ByteBuffer byteBuffer) {
+    }
+}
 ```
 
 发送示例
@@ -36,13 +40,13 @@ account.setEmail("763653451@qq.com");
 account.setNickname("slience");
 account.setSignature("this is a signature");
 
-DataByteBuffer dataByteBuffer = new DataByteBuffer("/user/name", account);
+DataByteBuffer dataWrapper = new DataByteBuffer("/user/name", account);
 
 /**
  * 方法位于 com.nxt.im.client.Client 类中
  * 发送到后端
  */
-client.send(dataByteBuffer.toByteBuffer());
+client.send(dataWrapper.toByteBuffer());
 
 ```
 
@@ -57,9 +61,9 @@ ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 try {
   socketChannel.read(byteBuffer);
 
-  DataByteBuffer dataByteBuffer = new DataByteBuffer(byteBuffer);
-  System.out.println(dataByteBuffer.getUrl());
-  Accounts account = (Accounts) dataByteBuffer.getData();
+  DataByteBuffer dataWrapper = new DataByteBuffer(byteBuffer);
+  System.out.println(dataWrapper.getUrl());
+  Accounts account = (Accounts) dataWrapper.getData();
   System.out.println(account.getSignature());
 } catch (IOException ioE) {
   // ioE.printStackTrace();

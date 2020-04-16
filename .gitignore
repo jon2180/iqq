@@ -12,10 +12,16 @@ buildNumber.properties
 .mvn/timing.properties
 
 #
+# Gradle
+#
+build/
+.gradle/
+
+#
 # IntelliJ
 #
-*.iml
-.idea/*
+
+.idea/
 !.idea/runConfigurations/
 
 #
