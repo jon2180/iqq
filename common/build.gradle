@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+group 'me.iqq'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 11
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}

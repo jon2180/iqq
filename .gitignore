@@ -15,6 +15,7 @@ buildNumber.properties
 # Gradle
 #
 build/
+**/build/
 .gradle/
 
 #

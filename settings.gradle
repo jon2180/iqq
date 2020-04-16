@@ -1,2 +1,4 @@
 rootProject.name = 'IQQ'
-
+include 'common'
+include 'server'
+include 'client'
