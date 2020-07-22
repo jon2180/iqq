@@ -10,13 +10,5 @@ sourceCompatibility = 11
 mainClassName = 'me.iqq.client.App'
 
 dependencies {
-    compile project(':common')
-}
-
-
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
+    implementation project(':common')
 }

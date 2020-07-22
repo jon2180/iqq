@@ -1,12 +1,9 @@
 package me.iqq.client.ui;
 
-import me.iqq.client.controller.RequestUtils;
-import me.iqq.common.protocol.Message;
 import me.iqq.common.utils.FormatTools;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 /**
  * ChatFrame
@@ -76,11 +73,12 @@ public class ChatFrame extends JFrame {
             jtashow.setLineWrap(true);
             jta.setText("");
 
-            try {
-                RequestUtils.sendMessage(new Message(myQQ, targetQQ, content, 0));
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            // TODO 发送消息
+//            try {
+//                RequestUtils.sendMessage(new Message(myQQ, targetQQ, content, 0));
+//            } catch (IOException ioException) {
+//                ioException.printStackTrace();
+//            }
         });
     }
 
@@ -91,10 +89,10 @@ public class ChatFrame extends JFrame {
      * @param message Messages对象
      * @param time    时间戳
      */
-    public void receiveMessage(Message message, long time) {
-        System.out.println(message.getOriginAccount() + ": " + message.getContent());
-        jtashow.append(message.getOriginAccount() + "  " + FormatTools.formatTimestamp(time) + ":\r\n" + message.getContent() + "\r\n");
-        jtashow.setLineWrap(true);
-        jta.setText("");
-    }
+//    public void receiveMessage(Message message, long time) {
+//        System.out.println(message.getOriginAccount() + ": " + message.getContent());
+//        jtashow.append(message.getOriginAccount() + "  " + FormatTools.formatTimestamp(time) + ":\r\n" + message.getContent() + "\r\n");
+//        jtashow.setLineWrap(true);
+//        jta.setText("");
+//    }
 }

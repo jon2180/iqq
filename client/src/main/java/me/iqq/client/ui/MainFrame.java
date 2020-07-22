@@ -1,11 +1,9 @@
 package me.iqq.client.ui;
 
-import me.iqq.client.model.FramesManager;
-import me.iqq.common.protocol.Friend;
+import me.iqq.client.ui.model.FramesManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Vector;
 
 /**
  * FriendsFrame
@@ -14,9 +12,9 @@ import java.util.Vector;
  */
 public class MainFrame extends JFrame {
 
-    private JPanel test = new JPanel();
+    private final JPanel test = new JPanel();
 
-    private FramesManager framesManager;
+    private final FramesManager framesManager;
 
     public MainFrame(FramesManager fm) {
         super("好友列表");
@@ -40,24 +38,24 @@ public class MainFrame extends JFrame {
         setMenuBar(new MyMenuBar());
     }
 
-    Vector<Friend> friends;
+//    Vector<Friend> friends;
 
-    public void render(Vector<Friend> friends) {
-        this.friends = friends;
-        updateFriendsList();
-        repaint();
-    }
+//    public void render(Vector<Friend> friends) {
+//        this.friends = friends;
+//        updateFriendsList();
+//        repaint();
+//    }
 
     public void updateFriendsList() {
-        if (friends == null)
-            return;
+//        if (friends == null)
+//            return;
         test.removeAll();
-        for (int i = 0; i < friends.size(); ++i) {
-            FriendPanel friendPanel = new FriendPanel(friends.get(i).getTargetUserId());
-            friendPanel.setLocation(0, 50 * i);
-            friendPanel.setVisible(true);
-            test.add(friendPanel);
-        }
+//        for (int i = 0; i < friends.size(); ++i) {
+//            FriendPanel friendPanel = new FriendPanel(friends.get(i).getTargetUserId());
+//            friendPanel.setLocation(0, 50 * i);
+//            friendPanel.setVisible(true);
+//            test.add(friendPanel);
+//        }
     }
 
 
@@ -76,7 +74,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class MyMenuBar extends MenuBar {
+    private static class MyMenuBar extends MenuBar {
         public MyMenuBar() {
             super();
 
@@ -86,8 +84,4 @@ public class MainFrame extends JFrame {
             add(my);
         }
     }
-
-//    public static void main(String[] args) {
-//        new MainFrame();
-//    }
 }

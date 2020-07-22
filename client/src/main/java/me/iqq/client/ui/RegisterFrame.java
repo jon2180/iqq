@@ -1,8 +1,6 @@
 package me.iqq.client.ui;
 
-import me.iqq.client.controller.RequestUtils;
-import me.iqq.client.model.FramesManager;
-import me.iqq.common.protocol.User;
+import me.iqq.client.ui.model.FramesManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +16,7 @@ public class RegisterFrame extends JFrame {
     /**
      * 提供单例模式实现，一个程序只有一个此界面
      */
-    private static volatile RegisterFrame instance = null;
+    private static final RegisterFrame instance = null;
 
     /**
      * 版本号
@@ -36,7 +34,7 @@ public class RegisterFrame extends JFrame {
     private JButton certainBtn;
     private JButton cancelBtn;
 
-    private User user;
+    //    private User user;
     private int statusCode;
 
     private FramesManager framesManager;
@@ -115,7 +113,7 @@ public class RegisterFrame extends JFrame {
             if (nickname == null || nickname.length() <= 0 || pwd.length() <= 0 || repwd.length() <= 0) {
                 JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
             } else {
-                RequestUtils.register(nickname, pwd);
+//                RequestUtils.register(nickname, pwd);
             }
         });
 

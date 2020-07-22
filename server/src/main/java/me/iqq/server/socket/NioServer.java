@@ -1,54 +1,47 @@
 package me.iqq.server.socket;
 
-import me.iqq.common.protocol.DataWrapper;
-import me.iqq.server.config.ServerInfo;
-import me.iqq.server.routes.Router;
+import lombok.extern.slf4j.Slf4j;
+import me.iqq.common.socket.SelectionKeyHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
- * 创建 TCP 服务器 关键类：Channels ServerSocketChannel, Selector, SelectorKey
+ * 创建 TCP 服务器
+ * 关键类：Channels ServerSocketChannel, Selector, SelectorKey
  *
  * @version 191211
  */
+@Slf4j
 public class NioServer {
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
-    private Router router;
+    private final int port;
+    private final SelectionKeyHandler keyHandler;
 
-    public NioServer(int port, Router initialRouter) throws IOException {
-        router = initialRouter;
+    public NioServer(SelectionKeyHandler keyHandler, int port) {
+        this.keyHandler = keyHandler;
+        this.port = port;
+    }
 
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(port);
-
-        // 创建一个 selector
-        selector = Selector.open();
+    public void start() throws IOException {
         // 通过 ServerSocketChannel 创建channel通道ss
         serverSocketChannel = ServerSocketChannel.open();
         // 为channel 通道绑定监听端口
-        serverSocketChannel.bind(inetSocketAddress);
+        serverSocketChannel.socket().bind(new InetSocketAddress(port));
         // 设置channel为非阻塞模式
         serverSocketChannel.configureBlocking(false);
+
+        // 创建一个 selector
+        selector = Selector.open();
         // 将channel 注册到selector上，监听连接事件
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-        System.out.println("Server running at " + inetSocketAddress.getHostName() + ":" + inetSocketAddress.getPort());
-    }
-
-    public NioServer(Router initialRouter) throws IOException {
-        this(ServerInfo.PORT, initialRouter);
-    }
-
-
-    public void listen() {
+        log.debug("Server running at port :" + port);
 
         // 服务器启动成功
         while (selector.isOpen()) {
@@ -58,90 +51,39 @@ public class NioServer {
                     continue;
                 }
             } catch (IOException ioE) {
-                System.out.println("in NioServer.listen");
+                log.warn("In NioServer::run", ioE);
                 ioE.printStackTrace();
                 break;
             }
 
             // 获取所有可用channel的集合
-            Set<SelectionKey> selectionKeys = selector.selectedKeys();
-
-            Iterator<SelectionKey> iterator = selectionKeys.iterator();
-
-            while (iterator.hasNext()) {
+            Iterator<SelectionKey> it = selector.selectedKeys().iterator();
+            while (it.hasNext()) {
                 // selectionKey实例
-                SelectionKey selectionKey = iterator.next();
-
+                SelectionKey key = it.next();
                 // [!] 移除set中的当前的selectionKey
-                iterator.remove();
+                it.remove();
 
                 // 根据就绪状态来判断相应的逻辑
-                SocketChannel socketChannel = null;
                 try {
-                    if (selectionKey.isAcceptable()) {
-                        acceptHandler(serverSocketChannel, selector);
-                    } else if (selectionKey.isReadable()) {
-                        // 要从selectionKey中获取到已经就绪的channel
-                        socketChannel = (SocketChannel) selectionKey.channel();
-                        readHandler(socketChannel);
-                        // 将channel再次注册到selector上，监听它的可读事件
-                        socketChannel.register(selector, SelectionKey.OP_READ);
-                    }
+                    keyHandler.handle(key);
                 } catch (IOException cce) {
-                    cce.printStackTrace();
                     // If current socketChannel is disconnected, close the socketChanel
                     try {
-                        if (socketChannel != null) {
-                            socketChannel.close();
-                        }
+                        key.channel().close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+
             }
         }
     }
 
-    public void acceptHandler(ServerSocketChannel serverSocketChannel, Selector selector) throws IOException {
-        // 如果是接入事件，创建 SocketChannel
-        SocketChannel socketChannel = serverSocketChannel.accept();
-
-        // 将socketChannel设置为非阻塞工作模式
-        socketChannel.configureBlocking(false);
-
-        // 将channel注册到selector上，监听可读事件
-        socketChannel.register(selector, SelectionKey.OP_READ);
-
-        // 回复客户端提示信息
-        // socketChannel.write(Message.encode("请注意隐私安全"));
-    }
-
-    /**
-     * 处理可读事件
-     *
-     * @param socketChannel 该请求的SocketChannel实体
-     */
-    public void readHandler(SocketChannel socketChannel) throws IOException {
-        // 创建buffer
-        ByteBuffer byteBuffer = ByteBuffer.allocate(3096);
-        socketChannel.read(byteBuffer);
-
+    public void stop() {
         try {
-            DataWrapper data = new DataWrapper(byteBuffer);
-            if (router != null) {
-                router.dispatch(data, socketChannel);
-            }
-        } catch (ClassNotFoundException cnf) {
-            System.exit(0);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-
-    public void close() {
-        try {
-            selector.close();
             serverSocketChannel.close();
+            selector.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

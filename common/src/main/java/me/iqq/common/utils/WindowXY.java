@@ -5,7 +5,6 @@ import java.awt.*;
 
 public class WindowXY {
 
-
     public static Point getXY(int w, int h) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         int width = toolkit.getScreenSize().width;
