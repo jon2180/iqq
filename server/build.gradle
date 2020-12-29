@@ -20,6 +20,12 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
     implementation 'commons-dbutils:commons-dbutils:1.7'
 
+    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+    implementation 'javax.xml.bind:jaxb-api:+'
+    implementation 'com.sun.xml.bind:jaxb-impl:+'
+    implementation 'com.sun.xml.bind:jaxb-core:+'
+    implementation 'javax.activation:activation:+'
+
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
     // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:

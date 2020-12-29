@@ -66,9 +66,9 @@ public class FriendDAOImpl implements FriendDAO {
 //            result = qs.query(/* sql */"select id, target_account, group_name, type from friends where origin_account=?",
 //                /* friend bean list handler */new BeanListHandler<>(Friend.class),
 //                /* parameters */qq);
-            result = qs.query(/* sql */"select id, first_account, second_account, group_name_for_first, group_name_for_second, link_time, type from friend where first_account=?" +
+            result = qs.query(/* sql */"select id, first_account, second_account, group_name_for_first, group_name_for_second, link_time, type from friends where first_account=?" +
                     " union " +
-                    "select id, first_account, second_account, group_name_for_first, group_name_for_second, link_time, type from friend where second_account=?",
+                    "select id, first_account, second_account, group_name_for_first, group_name_for_second, link_time, type from friends where second_account=?",
                 /* friend bean list handler */new FriendListResultSetHandler(),
                 /* parameters */userId, userId);
         } catch (SQLException sqlException) {
@@ -82,9 +82,9 @@ public class FriendDAOImpl implements FriendDAO {
         QueryRunner qs = new QueryRunner(DatabaseFactory.getDataSource());
         List<Friend> result = null;
         try {
-            result = qs.query(/* sql */"select id, first_account, second_account, group_name_for_first, group_name_for_second, link_time, type from friend where first_account=?" +
+            result = qs.query(/* sql */"select id, first_account, second_account, group_name_for_first, group_name_for_second, link_time, type from friends where first_account=?" +
                     " union " +
-                    "select id, first_account, second_account, group_name_for_first, group_name_for_second, link_time, type from friend where second_account=?",
+                    "select id, first_account, second_account, group_name_for_first, group_name_for_second, link_time, type from friends where second_account=?",
                 /* friend bean list handler */new FriendListResultSetHandler(),
                 /* parameters */userId, userId);
 

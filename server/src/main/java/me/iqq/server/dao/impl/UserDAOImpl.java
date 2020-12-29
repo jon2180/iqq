@@ -20,7 +20,7 @@ public class UserDAOImpl implements UserDAO {
         Long result = -1L;
         try {
             result = new QueryRunner(DatabaseFactory.getDataSource())
-                .insert(/* sql */"insert into user (id, nickname, email, password, salt) values(?,?,?,?,?)",
+                .insert(/* sql */"insert into accounts (id, nickname, email, password, salt) values(?,?,?,?,?)",
                     /* result set handler */new ScalarHandler<>(),
                     /* params */accounts.getId(), accounts.getNickname(), accounts.getPassword());
         } catch (SQLException sqlException) {
@@ -44,7 +44,7 @@ public class UserDAOImpl implements UserDAO {
         User accounts = null;
         try {
             accounts = new QueryRunner(DatabaseFactory.getDataSource())
-                .query(/* sql */"SELECT id, nickname, avatar, signature, phone, email, password, salt, login_ip, birthday, register_time, status FROM user where id = ?",
+                .query(/* sql */"SELECT id, nickname, avatar, signature, phone, email, password, salt, login_ip, birthday, register_time, status FROM accounts  where id = ?",
                     /* result set handle */new UserResultSetHandler(),
                     /* params */qq
                 );
@@ -66,7 +66,7 @@ public class UserDAOImpl implements UserDAO {
             connection.setAutoCommit(false);
             for (String s : ids) {
                 User user = qs.query(connection,
-                    /* sql */"SELECT id, nickname, avatar, signature, phone, email, password, salt, login_ip, birthday, register_time, status from user where id=?",
+                    /* sql */"SELECT id, nickname, avatar, signature, phone, email, password, salt, login_ip, birthday, register_time, status from accounts where id=?",
                     /* result set handle */new UserResultSetHandler(),
                     /* params */s
                 );
