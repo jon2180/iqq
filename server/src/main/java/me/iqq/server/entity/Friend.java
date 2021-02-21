@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -26,21 +27,18 @@ public class Friend {
     /**
      * 发送者账户
      */
-    private String firstAccount;
-
-    /**
-     * 接收者账户
-     */
-    private String secondAccount;
+    private int fid1;
+    private int fid2;
 
     /**
      * 所在群组
      */
-    private String groupNameForFirst;
+    private String cateName1;
+    private String cateName2;
 
-    private String groupNameForSecond;
+    private Timestamp linkTime;
 
-    private Date linkTime;
+    private int status;
     /**
      * 好友状态，即为是否在黑名单
      */

@@ -1,8 +1,7 @@
 package me.iqq.server.dao;
 
-import me.iqq.server.dao.impl.FriendDAOImpl;
+import me.iqq.server.entity.Account;
 import me.iqq.server.entity.Friend;
-import me.iqq.server.entity.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class FriendDAOTest {
 
-    FriendDAO friendDAO = new FriendDAOImpl();
+    FriendDAO friendDAO = new FriendDAO();
 
     @BeforeEach
     void setUp() {
@@ -41,56 +40,56 @@ class FriendDAOTest {
     }
 
     @Test
-    void getAllFriends() {
-        String qq = "2345678";
-        List<Friend> list = friendDAO.getFriendsById(qq);
+    void testFindByFId() {
+//        String qq = "2345678";
+        List<Friend> list = friendDAO.findByFId(1);
 
-        assertNotNull(list);
+//        assertNotNull(list);
 
         for (var f : list) {
-            assertNotNull(f.getFirstAccount());
+//            assertNotNull(f.getFid1());
             System.out.println(f);
         }
 
-        ConcurrentHashMap<String, List<User>> hashMap = new ConcurrentHashMap<>();
-        for (var f : list) {
-            if (f.getFirstAccount().equals(qq)) {
-                User user = new User().setId(f.getSecondAccount());
-                if (hashMap.containsKey(f.getGroupNameForFirst())) {
-                    hashMap.get(f.getGroupNameForFirst()).add(user);
-                } else {
-                    List<User> l = new ArrayList<>();
-                    l.add(user);
-                    hashMap.put(f.getGroupNameForFirst(), l);
-                }
-            } else {
-                User user = new User().setId(f.getFirstAccount());
-                if (hashMap.containsKey(f.getGroupNameForFirst())) {
-                    hashMap.get(f.getGroupNameForFirst()).add(user);
-                } else {
-                    List<User> l = new ArrayList<>();
-                    l.add(user);
-                    hashMap.put(f.getGroupNameForFirst(), l);
-                }
-            }
-        }
-        Set<Map.Entry<String, List<User>>> u = hashMap.entrySet();
-        for (var e : u) {
-            System.out.println(e.getKey());
-            for (var v : e.getValue()) {
-                System.out.println(v.getId());
-            }
-        }
+//        ConcurrentHashMap<String, List<Account>> hashMap = new ConcurrentHashMap<>();
+//        for (var f : list) {
+//            if (f.getFid1().equals(qq)) {
+//                Account user = new Account().setId(f.getFid2());
+//                if (hashMap.containsKey(f.getCateName1())) {
+//                    hashMap.get(f.getCateName1()).add(user);
+//                } else {
+//                    List<Account> l = new ArrayList<>();
+//                    l.add(user);
+//                    hashMap.put(f.getCateName1(), l);
+//                }
+//            } else {
+//                Account user = new Account().setId(f.getFid1());
+//                if (hashMap.containsKey(f.getFid1())) {
+//                    hashMap.get(f.getFid1()).add(user);
+//                } else {
+//                    List<Account> l = new ArrayList<>();
+//                    l.add(user);
+//                    hashMap.put(f.getFid1(), l);
+//                }
+//            }
+//        }
+//        Set<Map.Entry<String, List<Account>>> u = hashMap.entrySet();
+//        for (var e : u) {
+//            System.out.println(e.getKey());
+//            for (var v : e.getValue()) {
+//                System.out.println(v.getId());
+//            }
+//        }
     }
 
     public void testGetFriendsMapById() {
-        String id = "123456";
-        Map<String, List<String>> listMap = friendDAO.getFriendsMapById(id);
-
-        var entrySet = listMap.entrySet();
-        for (var e : entrySet) {
-            System.out.println(e.getKey());
-            System.out.println(e.getValue());
-        }
+//        String id = "123456";
+//        Map<String, List<String>> listMap = friendDAO.getFriendsMapById(id);
+//
+//        var entrySet = listMap.entrySet();
+//        for (var e : entrySet) {
+//            System.out.println(e.getKey());
+//            System.out.println(e.getValue());
+//        }
     }
 }

@@ -1,41 +1,34 @@
 package me.iqq.server.model;
 
+import lombok.Builder;
+import lombok.Getter;
+
+import java.nio.channels.SocketChannel;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class SocketMapper {
-
-    private final HashMap<String, UserSocket> socketMap;
-
-    public SocketMapper() {
-        socketMap = new HashMap<>();
-    }
-
-    public boolean containsKey(String key) {
-        return socketMap.containsKey(key);
-    }
-
-    public UserSocket get(String key) {
-        return socketMap.get(key);
-    }
-
-    public UserSocket find(String key) {
-        return containsKey(key) ? get(key) : null;
-    }
-
-    public void put(String key, UserSocket value) {
-        socketMap.put(key, value);
-    }
-
-    public void remove(String key) {
-        socketMap.remove(key);
-    }
+public class SocketMapper extends ConcurrentHashMap<String, SocketMapper.UserSocket> {
 
     public void refresh() {
-        for (HashMap.Entry<String, UserSocket> el : socketMap.entrySet()) {
+        for (HashMap.Entry<String, UserSocket> el : entrySet()) {
             UserSocket userSocket = el.getValue();
 
             if (userSocket.getChannel() == null || !userSocket.getChannel().isOpen())
                 remove(el.getKey());
         }
+    }
+
+    @Builder
+    @Getter
+    public static class UserSocket {
+        /**
+         * 用户id
+         */
+        private final String userID;
+
+        /**
+         * 与用户相绑定的通道
+         */
+        private final SocketChannel channel;
     }
 }

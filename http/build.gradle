@@ -1,0 +1,64 @@
+plugins {
+    id 'org.springframework.boot' version '2.4.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.neutron.im'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '15'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+//    maven { url 'https://maven.aliyun.com/repository/public/' }
+//    maven { url 'https://maven.aliyun.com/repository/spring/' }
+//    maven { url 'http://mirrors.cloud.tencent.com/nexus/repository/maven-public/' }
+//    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:+'
+    // https://mvnrepository.com/artifact/com.alibaba/druid
+    implementation 'com.alibaba:druid-spring-boot-starter:+'
+    // implementation 'com.alibaba:druid:+'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation 'commons-codec:commons-codec:+'
+    runtimeOnly 'mysql:mysql-connector-java'
+
+    implementation 'io.jsonwebtoken:jjwt-api:+'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:+'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:+'
+    // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:
+    //'org.bouncycastle:bcprov-jdk15on:1.60',
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}
+
+test {
+    useJUnitPlatform()
+}

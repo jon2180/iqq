@@ -12,14 +12,12 @@ import java.util.Random;
  */
 public class StringUtil {
     public static String getMd5(String str) {
-
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-
         // 计算md5函数
         if (md != null) {
             md.update(str.getBytes());
@@ -46,14 +44,10 @@ public class StringUtil {
      */
     public static String getRandom(int len) {
         StringBuilder qq = new StringBuilder();
-
         Random random = new Random();
-
         for (int i = 0; i < len; ++i) {
-            // qq /
             qq.append(random.nextInt(10));
         }
-
         return qq.toString();
     }
 }

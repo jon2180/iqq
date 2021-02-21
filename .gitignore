@@ -32,3 +32,5 @@ build/
 .classpath
 .project
 .vscode/
+
+__backup__/

@@ -6,16 +6,15 @@ plugins {
 group 'me.iqq'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 11
+sourceCompatibility = 15
 mainClassName = 'me.iqq.server.Server'
 
 dependencies {
-    implementation project(':common')
-
-    implementation 'mysql:mysql-connector-java:8.0.19'
+    implementation project(':core')
+    implementation 'mysql:mysql-connector-java:8.0.23'
 
     // https://mvnrepository.com/artifact/com.alibaba/druid
-    implementation 'com.alibaba:druid:1.1.22'
+    implementation 'com.alibaba:druid:1.2.4'
 
     // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
     implementation 'commons-dbutils:commons-dbutils:1.7'
@@ -30,6 +29,33 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
     // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:
     //'org.bouncycastle:bcprov-jdk15on:1.60',
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2' // or 'io.jsonwebtoken:jjwt-gson:0.11.2' for gson
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    // lombok support
+    compileOnly 'org.projectlombok:lombok:+'
+    annotationProcessor 'org.projectlombok:lombok:+'
+    testCompileOnly 'org.projectlombok:lombok:+'
+    testAnnotationProcessor 'org.projectlombok:lombok:+'
+
+    // protobuf support
+    implementation 'com.google.protobuf:protobuf-java:3.9.0'
+
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.7'
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation 'commons-codec:commons-codec:1.14'
+
+    // Log4j + Slf4j 支持
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation 'org.slf4j:slf4j-api:+'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
+    implementation 'org.slf4j:slf4j-log4j12:+'
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    implementation 'org.apache.logging.log4j:log4j-core:+'
+
+    // junit 支持
+    testImplementation 'org.junit.platform:junit-platform-launcher:1.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+    testImplementation 'org.junit.vintage:junit-vintage-engine:5.6.2'
 }
 

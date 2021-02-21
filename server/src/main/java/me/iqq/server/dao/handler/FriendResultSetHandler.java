@@ -22,14 +22,14 @@ public class FriendResultSetHandler implements ResultSetHandler<Friend> {
         if (!rs.next())
             return null;
 
-        return (new Friend()
+        return new Friend()
             .setId(rs.getInt("id"))
-            .setFirstAccount(rs.getString("first_account"))
-            .setSecondAccount(rs.getString("second_account"))
-            .setGroupNameForFirst(rs.getString("group_name_for_first"))
-            .setGroupNameForSecond(rs.getString("group_name_for_second"))
+            .setFid1(rs.getInt("fid_1"))
+            .setFid2(rs.getInt("fid_2"))
+            .setCateName1(rs.getString("cate_name_1"))
+            .setCateName2(rs.getString("cate_name_2"))
             .setLinkTime(rs.getTimestamp("link_time"))
-            .setType(rs.getInt("type"))
-        );
+            .setStatus(rs.getInt("status"))
+            .setType(rs.getInt("type"));
     }
 }
