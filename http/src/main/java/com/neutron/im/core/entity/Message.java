@@ -1,10 +1,10 @@
-package com.neutron.im.entity;
+package com.neutron.im.core.entity;
 
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 描述 消息表 的 数据库表字段类型
@@ -17,39 +17,35 @@ import java.sql.Timestamp;
 @ToString
 public class Message {
     /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-    /**
      * 消息id
      */
-    private int id;
-
-    private int chatType;
+    private String id;
+    private String chat_id;
     /**
      * 发消息的账号
      */
-    private int senderId;
-    private String senderName;
-    private String senderAvatar;
+    private String sender_id;
+
     /**
      * 收消息的账号
      */
-    private int receiverId;
-    private String receiverName;
-    private String receiverAvatar;
+    private String receiver_id;
+    private int chat_type;
 
     /**
      * 消息类型，可能是文本，图片，音频，视频等，但具体实现之后考虑
+     * <p>
+     * 0 文本 1 图片 2 音频 3 视频 4 二进制
      */
-    private int type;
+    private int content_type;
 
     /**
      * 消息内容，之后可能要该
      */
     private String content;
 
-    private String fileInfo;
-    private Timestamp time;
+    private String file_info;
+    private Date time;
     private int status;
+    private String extra;
 }

@@ -76,11 +76,11 @@ public class FriendService {
             connection = DatabaseFactory.getDataSource().getConnection();
             connection.setAutoCommit(false);
 
-            Friend friend = qs.query(connection, "select id, fid_1, fid_2, cate_name_1, cate_name_2, link_time, status, type, extra " +
+            Friend friend = qs.query(connection, "select id, fid_1, fid_2, cate_name_1, cate_name_2, link_time, status_1, type, extra " +
                     "from friends " +
                     "where fid_1=? and fid_2=? " +
                     "union " +
-                    "select id, fid_1, fid_2, cate_name_1, cate_name_2, link_time, status, type, extra " +
+                    "select id, fid_1, fid_2, cate_name_1, cate_name_2, link_time, status_1, type, extra " +
                     "from friends " +
                     "where fid_1=? and fid_2=?",
                 new FriendResultSetHandler(),

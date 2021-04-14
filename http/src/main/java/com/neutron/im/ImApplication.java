@@ -2,13 +2,15 @@ package com.neutron.im;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @SpringBootApplication
-//@MapperScan("com.neutron.im.mapper") // 本来可以用 MapperScan 注解，运行也不报错，但是 idea 检查不到
+@EnableRedisRepositories
+@EnableRedisHttpSession
+//@EnableAsync
 public class ImApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ImApplication.class, args);
     }
-
 }

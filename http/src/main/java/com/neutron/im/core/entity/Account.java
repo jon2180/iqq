@@ -1,6 +1,7 @@
-package com.neutron.im.entity;
+package com.neutron.im.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,16 +18,15 @@ import java.util.Collection;
  */
 @Data
 @ToString
+@JsonIgnoreProperties({
+    "accountNonLocked", "accountNonExpired", "credentialsNonExpired", "enabled", "authorities", "username"
+})
 public class Account implements UserDetails {
     /**
      * id号 也是 QQ号
      */
-    private int id;
+    private String id;
 
-    /**
-     * 昵称
-     */
-    private String uid;
     /**
      * 昵称
      */
@@ -58,12 +58,6 @@ public class Account implements UserDetails {
     private String password;
 
     /**
-     * 密码混合的盐
-     */
-    @JsonIgnore
-    private String salt;
-
-    /**
      * 生日
      */
     private Timestamp birthday;
@@ -71,12 +65,13 @@ public class Account implements UserDetails {
     /**
      * 注册时间
      */
-    private Timestamp registerTime;
+    private Timestamp reg_time;
 
     /**
      * 状态：即是否被禁用
      */
     private int status;
+    private String extra;
 
     /**
      * Returns the authorities granted to the user. Cannot return <code>null</code>.

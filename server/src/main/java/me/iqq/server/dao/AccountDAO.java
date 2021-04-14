@@ -18,7 +18,7 @@ public class AccountDAO {
         Long result = -1L;
         try {
             result = new QueryRunner(DatabaseFactory.getDataSource())
-                .insert("insert into accounts (uid, nickname, email, password, salt) values(?,?,?,?,?)",
+                .insert("insert into accounts (id, nickname, email, password, salt) values(?,?,?,?,?)",
                     new ScalarHandler<>(),
                     accounts.getUid(), accounts.getNickname(), accounts.getEmail(), accounts.getPassword(), accounts.getSalt());
         } catch (SQLException sqlException) {
@@ -39,7 +39,7 @@ public class AccountDAO {
         Account accounts = null;
         try {
             accounts = new QueryRunner(DatabaseFactory.getDataSource())
-                .query("SELECT id, uid, email, nickname, signature, tel, avatar, password, salt, birthday, reg_time, status, extra FROM accounts where id = ?",
+                .query("SELECT id, id, email, nickname, signature, tel, avatar, password, salt, birthday, reg_time, status, extra FROM accounts where id = ?",
                     new AccountResultSetHandler(),
                     id
                 );
@@ -53,7 +53,7 @@ public class AccountDAO {
         Account accounts = null;
         try {
             accounts = new QueryRunner(DatabaseFactory.getDataSource())
-                .query("SELECT id, uid, email, nickname, signature, tel, avatar, password, salt, birthday, reg_time, status, extra FROM accounts where uid = ?",
+                .query("SELECT id, id, email, nickname, signature, tel, avatar, password, salt, birthday, reg_time, status, extra FROM accounts where id = ?",
                     new AccountResultSetHandler(),
                     uid
                 );
@@ -80,7 +80,7 @@ public class AccountDAO {
             connection.setAutoCommit(false);
             for (String s : uniqueIds) {
                 Account user = qs.query(connection,
-                    "SELECT id, uid, email, nickname, signature, tel, avatar, password, salt, birthday, reg_time, status, extra from accounts where uid=?",
+                    "SELECT id, id, email, nickname, signature, tel, avatar, password, salt, birthday, reg_time, status, extra from accounts where id=?",
                     new AccountResultSetHandler(),
                     s
                 );

@@ -9,7 +9,7 @@ pluginManagement {
         mavenCentral()
     }
 }
-rootProject.name = 'IQQ'
+rootProject.name = 'neutron-im'
 
 include 'core'
 include 'server'

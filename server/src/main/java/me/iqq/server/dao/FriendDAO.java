@@ -86,7 +86,7 @@ public class FriendDAO {
         List<Friend> result = null;
         try {
             result = qs.query(
-                "select id, fid_1, fid_2, cate_name_1, cate_name_2, link_time, status, type from friends where fid_1=? or fid_2=?",
+                "select id, fid_1, fid_2, cate_name_1, cate_name_2, link_time, status_1, type from friends where fid_1=? or fid_2=?",
                 new FriendListResultSetHandler(),
                 fid, fid);
         } catch (SQLException sqlException) {

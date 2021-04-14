@@ -1,67 +1,34 @@
 package com.neutron.im.mapper;
 
-import com.neutron.im.entity.Account;
-import com.neutron.im.entity.Friend;
-import org.apache.ibatis.annotations.*;
+import com.neutron.im.core.entity.Account;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 @Mapper
 public interface AccountMapper {
-    @Select("select * from accounts")
+
+    @Insert("insert into accounts(id,email,nickname,password) values (replace(uuid(), '-', ''),#{email},#{nickname},#{password})")
+    int insert(String email, String nickname, String password);
+
+    int insertAccount(Account account);
+
+    @Delete("delete from accounts where id = #{id}")
+    boolean deleteById(String id);
+
+    int update(Account account);
+
+    @Select("select * from accounts limit 50")
     List<Account> findAll();
+
+    @Select("select * from accounts where id=#{id} limit 1")
+    Account findOneById(String id);
 
     @Select("select * from accounts where email=#{email} limit 1")
     Account findOneByEmail(String email);
 
-
-    @Select("select * from accounts where id=#{id} limit 1")
-    Account findOneById(int id);
-
-    @Select("'select * from accounts where uid=? limit 1")
-    Account findOneByUId(String uid);
-
-    @Insert("insert into accounts(uid,email,nickname,signature,tel,avatar,password,salt,birthday)\n" +
-            "       values (#{uid},#{email},#{nickname},#{signature},#{tel},#{avatar},#{password},#{salt},#{birthday})")
-    @SelectKey(statement = "call identity()", keyProperty = "id", before = false, resultType = int.class)
-    int insert(
-            String uid,
-            String email,
-            String nickname,
-            String signature,
-            String tel,
-            String avatar,
-            String password,
-            String salt,
-            String birthday
-    );
-
-//    @Insert("insert into accounts(uid,email,nickname,signature,tel,avatar,password,salt,birthday)\n" +
-//        "       values (#{uid},#{email},#{nickname},#{signature},#{tel},#{avatar},#{password},#{salt},#{birthday})")
-//    @SelectKey(statement = "call identity()", keyProperty = "id", before = false, resultType = int.class)
-//    int insert(Account account);
-
-    @Update("""
-            update accounts
-            set
-            uid=#{uid}, email=#{email}, nickname=#{nickname}, signature=#{signature}, tel=#{tel}, avatar=#{avatar},
-            password=#{password}, salt=#{salt}, birthday=#{birthday},status=#{status}
-            where id=#{id}
-            """)
-    int update(
-            String uid,
-            String email,
-            String nickname,
-            String signature,
-            String tel,
-            String avatar,
-            String password,
-            String salt,
-            String birthday,
-            int status,
-            int id
-    );
-
-//    @Delete("delete from accounts where id = #{id}")
-//    int delete(int id);
+    List<Account> searchFuzzily(String keyword);
 }

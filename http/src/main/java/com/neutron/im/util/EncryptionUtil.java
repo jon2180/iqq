@@ -8,7 +8,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 /**
  * HeaUtil
@@ -24,6 +23,16 @@ import java.util.Arrays;
 @Slf4j
 public class EncryptionUtil {
 
+    protected static char[] encrypt(EncryptionAlgorithm algorithm, String txt) throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance(algorithm.getName());
+        byte[] bytes = messageDigest.digest(txt.getBytes());
+        return Hex.encodeHex(bytes);
+    }
+
+    protected static String encryptToString(EncryptionAlgorithm algorithm, String txt) throws NoSuchAlgorithmException {
+        return String.valueOf(encrypt(algorithm, txt));
+    }
+
     /**
      * md5加密
      *
@@ -32,10 +41,11 @@ public class EncryptionUtil {
      * @throws NoSuchAlgorithmException e
      */
     public static char[] md5(String text) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-        byte[] bytes = messageDigest.digest(text.getBytes());
-        log.debug(Arrays.toString(bytes));
-        return Hex.encodeHex(bytes);
+        return encrypt(EncryptionAlgorithm.MD5, text);
+//        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+//        byte[] bytes = messageDigest.digest(text.getBytes());
+//        log.debug(Arrays.toString(bytes));
+//        return Hex.encodeHex(bytes);
     }
 
     /**
@@ -45,11 +55,12 @@ public class EncryptionUtil {
      * @return digest 摘要
      * @throws NoSuchAlgorithmException e
      */
-//    public static String sha1(String text) throws NoSuchAlgorithmException {
+    public static String sha1(String text) throws NoSuchAlgorithmException {
+        return encryptToString(EncryptionAlgorithm.SHA1, text);
 //        MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
 //        byte[] bytes = messageDigest.digest(text.getBytes());
 //        return Hex.encodeHexString(bytes);
-//    }
+    }
 
     /**
      * sha256加密
@@ -58,11 +69,12 @@ public class EncryptionUtil {
      * @return digest 摘要
      * @throws NoSuchAlgorithmException e
      */
-//    public static String sha256(String text) throws NoSuchAlgorithmException {
+    public static String sha256(String text) throws NoSuchAlgorithmException {
+        return encryptToString(EncryptionAlgorithm.SHA256, text);
 //        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 //        byte[] bytes = messageDigest.digest(text.getBytes());
 //        return Hex.encodeHexString(bytes);
-//    }
+    }
 
     /**
      * hmac-sha1加密
@@ -139,6 +151,45 @@ public class EncryptionUtil {
     public static SecretKeySpec createHmacSha256Key(String key) {
         return new SecretKeySpec(key.getBytes(), "HmacSHA256");
     }
+
+    protected enum EncryptionAlgorithm {
+        MD5("MD5"),
+        SHA1("SHA-1"),
+        SHA256("SHA-256");
+
+        private final String name;
+
+        EncryptionAlgorithm(String name) {
+            this.name = name;
+        }
+
+        // 定义抽象方法
+        public String getName() {
+            return name;
+        }
+    }
+
+
+//    protected enum EncryptionAlgorithm {
+//        MD5 {
+//            public String getName() {
+//                return "MD5";
+//            }
+//        },
+//        SHA1 {
+//            public String getName() {
+//                return "SHA-1";
+//            }
+//        },
+//        SHA256 {
+//            public String getName() {
+//                return "SHA-256";
+//            }
+//        };
+//
+//        public abstract String getName();//定义抽象方法
+//    }
+
 }
 
 

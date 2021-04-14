@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neutron.im.mapper.RequestMapper">
+    <select id="findOneById" parameterType="java.lang.Integer" resultType="com.neutron.im.core.entity.Request">
+        select id,
+               initiator_id,
+               target_id,
+               type,
+               submit_reason,
+               submit_time,
+               solved_result,
+               solved_reason,
+               solved_time,
+               extra
+        from requests
+        where id = #{id}
+    </select>
+    <select id="findByOriginatorId" parameterType="java.lang.Integer" resultType="com.neutron.im.core.entity.Request">
+        select id,
+               initiator_id,
+               target_id,
+               type,
+               submit_reason,
+               submit_time,
+               solved_result,
+               solved_reason,
+               solved_time,
+               extra
+        from requests
+        where initiator_id = #{id}
+    </select>
+    <select id="findByTargetId" parameterType="java.lang.Integer" resultType="com.neutron.im.core.entity.Request">
+        select id,
+               initiator_id,
+               target_id,
+               type,
+               submit_reason,
+               submit_time,
+               solved_result,
+               solved_reason,
+               solved_time,
+               extra
+        from requests
+        where target_id = #{id}
+    </select>
+    <insert id="insertRequest" useGeneratedKeys="true" parameterType="com.neutron.im.core.entity.Request">
+        insert into requests(initiator_id, target_id, type, submit_reason, solved_result, solved_reason, solved_time,
+                             extra)
+        values (#{initiator_id}, #{target_id}, #{type}, #{submit_reason}, #{solved_result}, #{solved_reason},
+                #{solved_time}, #{extra})
+    </insert>
+    <update id="updateRequest" parameterType="com.neutron.im.core.entity.Request">
+        update requests
+        <set>
+            <if test="submit_reason !=null and submit_reason != ''">submit_reason=#submit_reason},</if>
+            <if test="submit_time !=null and submit_time != ''">submit_time=#{submit_time},</if>
+            <if test="solved_result !=null and solved_result != ' '">solved_result=#{solved_result},</if>
+            <if test="solved_reason !=null and solved_reason != ' '">solved_reason=#{solved_reason},</if>
+            <if test="solved_time !=null and solved_time != ' '">solved_time=#{solved_time},</if>
+            <if test="extra !=null and extra != ' '">extra=#{extra}</if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteRequest" parameterType="int">
+        delete
+        from requests
+        where id = #{id}
+
+    </delete>
+</mapper>

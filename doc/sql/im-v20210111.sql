@@ -1,3 +1,6 @@
+create database neutron_im;
+use neutron_im;
+
 create table accounts
 (
     id        int unsigned auto_increment comment '自增长主键'

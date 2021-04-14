@@ -17,6 +17,7 @@ buildNumber.properties
 build/
 **/build/
 .gradle/
+local.properties
 
 #
 # IntelliJ

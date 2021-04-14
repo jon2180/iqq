@@ -1,31 +1,22 @@
 package com.neutron.im.util;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TokenUtilTest {
-//    String str;
+    @ParameterizedTest
+    @ValueSource(strings = {"helloworld", "xiaowang"})
+    public void testGenerateToken(String word) {
+        String tokenStr = TokenUtil.generateToken(new TokenUtil.JwtClaimsData() {{
+            setId(word);
+//            setUid("");
+//            setNickname(word);
+//            setEmail("test");
+        }});
 
-    @Test
-    public void generateToken() {
-//        str = TokenUtil.generateToken("xiaowang");
-        var data = new TokenUtil.JwtClaimsData();
-        data.setNickname("hello wong");
-        var tokenStr = TokenUtil.generateToken(data);
-//        System.out.println(str);
         System.out.println(tokenStr);
         var result = TokenUtil.validateToken(tokenStr);
-        System.out.println(result.getNickname());
-    }
-
-    @Test
-//    @Disabled
-    public void validateToken() {
-        System.out.println(new String(TokenUtil.key.getEncoded(), StandardCharsets.UTF_8));
+        Assertions.assertEquals(result.getId(), word);
     }
 }
