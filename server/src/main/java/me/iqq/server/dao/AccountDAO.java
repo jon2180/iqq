@@ -80,7 +80,7 @@ public class AccountDAO {
             connection.setAutoCommit(false);
             for (String s : uniqueIds) {
                 Account user = qs.query(connection,
-                    "SELECT id, id, email, nickname, signature, tel, avatar, password, salt, birthday, reg_time, status, extra from accounts where id=?",
+                    "SELECT id, email, nickname, signature, tel, avatar, password, salt, birthday, reg_time, status, extra from accounts where id=?",
                     new AccountResultSetHandler(),
                     s
                 );

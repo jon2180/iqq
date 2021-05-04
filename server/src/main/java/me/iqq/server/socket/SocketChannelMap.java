@@ -1,4 +1,4 @@
-package me.iqq.server.model;
+package me.iqq.server.socket;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SocketMapper extends ConcurrentHashMap<String, SocketMapper.UserSocket> {
+public class SocketChannelMap extends ConcurrentHashMap<String, SocketChannelMap.UserSocket> {
 
     public void refresh() {
         for (HashMap.Entry<String, UserSocket> el : entrySet()) {
@@ -24,7 +24,7 @@ public class SocketMapper extends ConcurrentHashMap<String, SocketMapper.UserSoc
         /**
          * 用户id
          */
-        private final String userID;
+        private final String userId;
 
         /**
          * 与用户相绑定的通道

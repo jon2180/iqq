@@ -5,6 +5,7 @@ import com.neutron.im.mapper.ChatsMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ChatsService {
@@ -15,7 +16,7 @@ public class ChatsService {
         this.chatsMapper = chatsMapper;
     }
 
-    public List<RecentChat> findByAccountId(String id) {
+    public List<Map<String, Object>> findByAccountId(String id) {
         return chatsMapper.findByAccountId(id);
     }
 

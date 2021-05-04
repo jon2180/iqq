@@ -1,17 +1,17 @@
 package com.neutron.im.mapper;
 
-import com.neutron.im.core.dto.FriendWithInfo;
 import com.neutron.im.core.entity.Friend;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface FriendMapper {
 
-    List<FriendWithInfo> findDetailByAccountId(String accountId);
+    List<Map<String, Object>> findDetailByAccountId(String accountId);
 
     boolean updateOne(Friend friend);
 

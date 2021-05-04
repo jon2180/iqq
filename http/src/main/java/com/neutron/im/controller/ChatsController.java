@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/chats")
@@ -24,7 +25,7 @@ public class ChatsController {
 
     @GetMapping("/")
     public ResultVO getChats(@RequestAttribute("claims") TokenUtil.JwtClaimsData claims) {
-        List<RecentChat> chats = chatsService.findByAccountId(claims.getId());
+        List<Map<String, Object>> chats = chatsService.findByAccountId(claims.getId());
         return ResultVO.success(chats);
     }
 

@@ -5,15 +5,7 @@ import lombok.ToString;
 
 import java.util.Date;
 
-//@Data
 public class RequestForm {
-    @Data
-    @ToString
-    public static class LoginForm {
-        private String email;
-        private String password;
-        private String captcha;
-    }
 
     @Data
     @ToString

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -37,7 +38,7 @@ class ChatsMapperTest {
 //            setOpposite_name(1);
 //            setSender_id(3);
 //            setReceiver_id(4);
-            setLast_msg_id(1);
+//            setLast_msg_id(1);
             setLast_msg_content("hello boy");
             setUnread_count(1);
         }};
@@ -56,9 +57,9 @@ class ChatsMapperTest {
     @Order(2)
     void findByAccountId() {
         System.out.println(serialId);
-        List<RecentChat> chats = chatsService.findByAccountId("");
+        List<Map<String, Object>> chats = chatsService.findByAccountId("");
         assertNotNull(chats);
-        for (RecentChat chat : chats) {
+        for (Map<String, Object> chat : chats) {
             System.out.println(chat);
             assertNotNull(chat);
         }
@@ -77,7 +78,7 @@ class ChatsMapperTest {
         }
         chat.setLast_msg_time(new Date());
         chat.setLast_msg_content("123456 edited");
-        chat.setLast_msg_id(2);
+//        chat.setLast_msg_id(2);
         boolean success = chatsService.update(chat);
         System.out.println(success);
     }

@@ -20,6 +20,8 @@ dependencies {
 
     // protobuf support
     implementation 'com.google.protobuf:protobuf-java:3.9.0'
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation 'commons-io:commons-io:2.7'

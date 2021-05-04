@@ -1,6 +1,5 @@
 package com.neutron.im.service;
 
-import com.neutron.im.core.dto.FriendWithInfo;
 import com.neutron.im.core.entity.Friend;
 import com.neutron.im.mapper.FriendMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FriendService {
@@ -24,7 +24,7 @@ public class FriendService {
      *
      * @param accountId
      */
-    public List<FriendWithInfo> findDetailsByAccountId(String accountId) {
+    public List<Map<String, Object>> findDetailsByAccountId(String accountId) {
         return friendMapper.findDetailByAccountId(accountId);
     }
 

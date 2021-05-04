@@ -8,12 +8,10 @@ import me.iqq.common.api.LoginApiProto;
 import me.iqq.common.api.LogonApiProto;
 import me.iqq.common.api.MessageHeaderProto;
 import me.iqq.common.protocol.DataPacket;
-import me.iqq.common.socket.EventDispatcher;
-import me.iqq.common.socket.SelectionKeyHandler;
-import me.iqq.common.socket.impl.EventDispatcherImpl;
-import me.iqq.common.socket.impl.SelectionKeyHandlerImpl;
 import me.iqq.server.service.AccountService;
+import me.iqq.server.socket.EventDispatcher;
 import me.iqq.server.socket.NioServer;
+import me.iqq.server.socket.impl.EventDispatcherImpl;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
@@ -33,19 +31,18 @@ public class Server {
         serverConf = ResourceBundle.getBundle("application");
     }
 
-    public Server(String... args) {
-        NioServer server = null;
+    public static void main(String[] args) {
+        final Server server = new Server();
+
+        NioServer nioServer = null;
 
         // 事件分发
-        EventDispatcher dispatcher = new EventDispatcherImpl<>(buildControllerMapper());
-        // selection key 处理
-        SelectionKeyHandler keyHandler = new SelectionKeyHandlerImpl(dispatcher);
-
+        EventDispatcher dispatcher = new EventDispatcherImpl<>(server.buildControllerMapper());
         try {
-            server = new NioServer(keyHandler, Integer.parseInt(serverConf.getString("port")));
-            server.start();
+            nioServer = new NioServer(dispatcher, Integer.parseInt(serverConf.getString("port")));
+            nioServer.start();
         } catch (IOException ioE) {
-            server.stop();
+            nioServer.stop();
             System.exit(-1);
             ioE.printStackTrace();
         }

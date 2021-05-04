@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.neutron.im.mapper.ChatsMapper">
-    <select id="findByAccountId" parameterType="String" resultType="com.neutron.im.core.entity.RecentChat">
-        select id,
+    <select id="findByAccountId" parameterType="String" resultType="java.util.HashMap">
+        select chats.id,
                account_id,
                target_id,
                type,
@@ -12,9 +12,35 @@
                last_msg_id,
                last_msg_content,
                unread_count,
-               status
-        from neutron_im.chats
-        where account_id = #{id}
+               chats.status,
+               email           account_email,
+               nickname        account_nickname,
+               signature       account_signature,
+               avatar          account_avatar,
+               accounts.status account_status
+        from chats
+                 left join accounts on chats.target_id = accounts.id
+        where account_id = #{id, jdbcType=VARCHAR}
+        union
+        select chats.id,
+               account_id,
+               target_id,
+               type,
+               sender_id,
+               receiver_id,
+               last_msg_time,
+               last_msg_id,
+               last_msg_content,
+               unread_count,
+               chats.status,
+               email           account_email,
+               nickname        account_nickname,
+               signature       account_signature,
+               avatar          account_avatar,
+               accounts.status account_status
+        from chats
+                 left join accounts on chats.account_id = accounts.id
+        where target_id = #{id, jdbcType=VARCHAR}
     </select>
 
     <select id="findById" parameterType="String" resultType="com.neutron.im.core.entity.RecentChat">

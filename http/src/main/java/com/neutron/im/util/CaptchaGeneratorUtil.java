@@ -13,7 +13,7 @@ import java.util.Random;
 public class CaptchaGeneratorUtil {
 
     private int weight = 100;             //验证码图片的长和宽
-    private int height = 50;
+    private int height = 32;
     private String text;                // 用来保存验证码的文本内容
     private Random random = new Random();      // 获取随机数对象
     private String[] fontNames = {"宋体", "华文楷体", "黑体", "微软雅黑", "楷体_GB2312"};   //字体数组

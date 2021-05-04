@@ -2,7 +2,6 @@ package com.neutron.im.controller;
 
 import com.neutron.im.core.ResultVO;
 import com.neutron.im.core.StatusCode;
-import com.neutron.im.core.dto.FriendWithInfo;
 import com.neutron.im.core.dto.RequestForm;
 import com.neutron.im.core.entity.Friend;
 import com.neutron.im.service.FriendService;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -32,7 +32,7 @@ public class FriendController {
     @GetMapping("/")
     public ResultVO getFriends(@RequestAttribute("claims") TokenUtil.JwtClaimsData claims) {
 //        log.info("claims.id: {}", claims.getEmail());
-        List<FriendWithInfo> friends = friendService.findDetailsByAccountId(claims.getId());
+        List<Map<String, Object>> friends = friendService.findDetailsByAccountId(claims.getId());
         return ResultVO.success(friends);
     }
 

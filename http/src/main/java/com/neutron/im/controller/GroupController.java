@@ -3,9 +3,13 @@ package com.neutron.im.controller;
 import com.neutron.im.core.ResultVO;
 import com.neutron.im.service.GroupService;
 import com.neutron.im.util.TokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+@Slf4j
 @RestController
 @RequestMapping("/groups")
 public class GroupController {
@@ -25,13 +29,15 @@ public class GroupController {
     }
 
     @PostMapping("/")
-    public ResultVO postCreateGroup(@RequestBody String body) {
+    public ResultVO postCreateGroup(@RequestBody Map<String, Object> body) {
 //        groupService.insertGroup();
+        log.info("postCreateGroup: {}", body);
         return ResultVO.success(null);
     }
 
     @PutMapping("/{groupId}")
-    public ResultVO putGroup(@PathVariable String groupId, @RequestBody String body) {
+    public ResultVO putGroup(@PathVariable String groupId, @RequestBody Map<String, Object> body) {
+        log.info("putGroup: {}", body);
         return ResultVO.success(null);
     }
 

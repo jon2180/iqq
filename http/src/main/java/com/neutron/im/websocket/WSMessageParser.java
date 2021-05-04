@@ -13,9 +13,8 @@ public class WSMessageParser {
     //    public static WebSocketMessage DEFAULT_MESSAGE = new WebSocketMessage();
     private static ObjectMapper mapper = new ObjectMapper();
 
-    WebSocketMessage decode(String message) {
+    public WebSocketMessage decode(String message) {
         WebSocketMessage wsMessage = null;
-
         try {
             wsMessage = mapper.readValue(message, WebSocketMessage.class);
         } catch (JsonMappingException e) {
@@ -30,8 +29,6 @@ public class WSMessageParser {
         if (wsMessage == null) {
             log.info("InvalidFormat");
         }
-
-        log.info("esMessage: {}", wsMessage);
         return wsMessage;
     }
 

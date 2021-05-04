@@ -1,7 +1,5 @@
 package com.neutron.im.websocket;
 
-import com.neutron.im.core.entity.Message;
-import com.neutron.im.core.entity.RecentChat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -9,40 +7,24 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * WebSocket 入口类，通过 ServerEndPoint 指定了连接路径
+ *
+ * @version v20210418
+ * @since 11
+ */
 @Slf4j
 @ServerEndpoint("/relay/{query}")
 @Component
 public class MessageRelayServer {
 
-    private static final Map<String, Integer> map = new HashMap<>() {{
-        put("text", 0);
-        put("image", 1);
-        put("voice", 2);
-        put("video", 3);
-        put("other", 4);
-    }};
-
-    private static final Map<Integer, String> chatTypeMap = new HashMap<>() {{
-        put(0, "single");
-        put(1, "group");
-//        put(0, "single");
-//        put(0, "single");
-//        put(0, "single");
-
-    }};
-
-
-    //    private static CopyOnWriteArraySet<MessageRelayServer> wsSet = new CopyOnWriteArraySet<>();
-//    private static AtomicInteger onlineCount = new AtomicInteger(0);
     private static final WSMessageParser messageParser = new WSMessageParser();
     private static final ConcurrentHashMap<String, MessageRelayServer> clientMap = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, List<Session>> groupMap = new ConcurrentHashMap<>();
+
     /**
      * z
      * 记录当前在线连接数
@@ -114,26 +96,12 @@ public class MessageRelayServer {
     }
 
     /**
-     * 服务端发送消息给客户端
+     * 广播消息
+     * 发送至每一个在线用户
      */
-    private static void sendMessage(String message, Session session, String toId) {
-        try {
-//            log.info("服务端给客户端[{}]发送消息{}", id, message);
-//            serverMap.get();
-            session.getBasicRemote().sendText(message);
-        } catch (Exception e) {
-            log.error("服务端发送消息给客户端失败：{}", e.getMessage());
-        }
-    }
-
-    /**
-     * 群发自定义消息
-     */
-
     public static void broadcast(String message) {
         for (var item : clientMap.entrySet()) {
             //同步异步说明参考：http://blog.csdn.net/who\_is\_xiaoming/article/details/53287691
-            //this.session.getBasicRemote().sendText(message);
             item.getValue().session.getAsyncRemote().sendText(message);//异步发送消息.
         }
     }
@@ -161,8 +129,6 @@ public class MessageRelayServer {
 
         log.info("session #{} param: {}", session.getId(), param);
         log.info("有新连接 #{} 加入：当前在线人数为：{}", param, clientMap.size());
-//        messageService.findById("#ffff");
-        WebsocketUtil.send();
     }
 
     @OnError
@@ -198,13 +164,19 @@ public class MessageRelayServer {
             return;
         }
 
+        lastReceiveTime = System.currentTimeMillis();
+
         log.info("服务端收到 #{}的消息: {}", this.id, message);
 
+        // 检查是不是特殊指令
         switch (message) {
-            case "HEARTBEAT":
-                send(session, message);
+            case "PING":
+            case "PONG":
+                // 心跳响应
+                send(session, "PONG");
                 break;
             case "QUIT":
+                // 服务端断开连接
                 clientMap.remove(this.id);
                 try {
                     session.close();
@@ -213,113 +185,52 @@ public class MessageRelayServer {
                 }
                 break;
             default:
-                WebSocketMessage decodedMessage = messageParser.decode(message);
-                handleWebSocketMessage(message, decodedMessage);
+                // 默认情况应该是用 JSON 格式处理数据
+                handleWebSocketMessage(message);
                 break;
         }
     }
 
-    public void handleWebSocketMessage(String rawMessage, WebSocketMessage decodedMessage) {
+    public void handleWebSocketMessage(String rawMessage) {
+        WebSocketMessage decodedMessage = messageParser.decode(rawMessage);
+
         if (decodedMessage == null || decodedMessage.getType() == null || "".equals(decodedMessage.getType())) {
             log.info("未知类型的消息：当作心跳包处理，原路原格式返回");
-            send(session, rawMessage);
+            send(session, "Invalid Format: No Invalid Message Type");
             return;
         }
 
-        log.info("解析后的消息：{}", decodedMessage);
-
         switch (decodedMessage.getType()) {
-            case "single": {
+            case "single":
                 MessageRelayServer server = clientMap.get(decodedMessage.getReceiver());
                 if (server != null) {
+                    //        if (!Objects.equals(this.id, decodedMessage.getSender())) {
+                    ////            return ResultVO.failed(StatusCode.S403_FORBIDDEN, "Can`t Send Message From Others By Yourself", null);
+                    //            log.error("Message Sender is invalid");
+                    //            return;
+                    //        }
+
                     log.info("服务端尝试给客户端 #{} 发送消息：{}", id, rawMessage);
                     send(server.session, decodedMessage);
                 } else {
-                    log.error("Target is offline, message need to be store into databases");
-                    // TODO save to databases, waiting for the user online
+                    log.warn("Target is offline, message need to be store into databases");
+                    // TODO save to databases, waiting for the user online or cache to redis
                 }
-                saveMessageToDatabase(decodedMessage);
+                try {
+                    WebsocketUtil.saveMessageToDatabase(decodedMessage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
-            }
-            case "group": {
+            case "group":
                 List<Session> group = groupMap.get(decodedMessage.getReceiver());
                 if (group != null) {
                     send(group, rawMessage);
                 }
-                saveMessageToDatabase(decodedMessage);
+                WebsocketUtil.saveMessageToDatabase(decodedMessage);
                 break;
-            }
-            default: {
+            default:
                 log.error("消息类型存在，但服务器暂时不能解析");
-            }
         }
-    }
-
-    public void saveMessageToDatabase(WebSocketMessage wsMessage) {
-        // 1st: check if parameters is valid
-//        if (wsMessage == null || wsMessage.getContent() == null || "".equals(wsMessage.getContent())) {
-////            return ResultVO.failed(StatusCode.S400_EMPTY_PARAMETER, "Invalid Parameters", null);
-//            log.error("Message is empty");
-//            return;
-//        }
-
-//        if (!Objects.equals(this.id, wsMessage.getSender())) {
-////            return ResultVO.failed(StatusCode.S403_FORBIDDEN, "Can`t Send Message From Others By Yourself", null);
-//            log.error("Message Sender is invalid");
-//            return;
-//        }
-
-        // 2ed: save wsMessage to database;
-        // 2.1 insert chat history
-//        Map<String, Object> map = wsMessage.getBody();
-//        WebsocketUtil.messageService.insertMessage(new Message() {{
-//            setChat_id((String) map.get("chat_id"));
-//            setChat_type((Integer) map.get("chat_type"));
-//            setSender_id((String)map.get("sender_id"));
-//            setReceiver_id((String) map.get("receiver_id"));
-//            setContent_type((String) map.getOrDefault(wsMessage.getContent_type(), 4));
-//            setContent(wsMessage.getContent());
-//            setFile_info(wsMessage.getFile_info());
-//            setTime(wsMessage.getTime());
-//            setStatus(wsMessage.getStatus());
-//        }});
-
-        // 2.2 update recent chat table
-//        RecentChat chat = WebsocketUtil.chatsService.findById(wsMessage.getChat_id());
-//        if (chat == null) {
-//            log.warn("No chat Record");
-//            return;
-////            return ResultVO.failed(StatusCode.S400_BAD_REQUEST, "No Chat Record", null);
-//        }
-//        chat.setLast_msg_id(wsMessage.getId());
-//        chat.setLast_msg_content(wsMessage.getContent());
-//        chat.setLast_msg_time(wsMessage.getTime());
-//        chat.setUnread_count(chat.getUnread_count() + 1);
-//        boolean val = WebsocketUtil.chatsService.update(chat);
-//
-//        if (!val) {
-//            log.error("Update Chat Failed");
-////            return ResultVO.failed(StatusCode.S500_SQL_ERROR, "Update Failed");
-//        }
-
-//        // 3rd: relay wsMessage
-//        int sendResult = MessageRelayServer.send(wsMessage.getReceiver_id(), new WebSocketMessage() {{
-//            setTimestamp(wsMessage.getTime().getTime());
-//            setSender(wsMessage.getSender_id());
-//            setReceiver(wsMessage.getReceiver_id());
-//            // TODO set chat type
-//            setType(wsMessage.getChat_type() == 0 ? "single" : "group");
-//            setBody(new HashMap<>() {{
-//                put("chat_id", wsMessage.getChat_id());
-//                put("content", wsMessage.getContent());
-//                put("content_type", wsMessage.getContent_type());
-//                put("id", wsMessage.getId());
-//                put("sender_id", wsMessage.getSender_id());
-//                put("receiver_id", wsMessage.getReceiver_id());
-//                put("time", wsMessage.getTime().getTime());
-//            }});
-//        }});
-
-//        log.info("sent result: {}", sendResult);
     }
 }

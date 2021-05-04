@@ -5,7 +5,6 @@ import com.neutron.im.config.MailService;
 import com.neutron.im.core.ResultVO;
 import com.neutron.im.core.StatusCode;
 import com.neutron.im.core.dto.RequestForm;
-import com.neutron.im.core.dto.RequestForm.LoginForm;
 import com.neutron.im.core.entity.Account;
 import com.neutron.im.core.exception.AuthFailedException;
 import com.neutron.im.core.exception.DisabledAccountException;
@@ -23,9 +22,9 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/")
@@ -47,6 +46,7 @@ public class HomeController {
         this.accountService = accountService;
         this.redisUtil = redisUtil;
         this.mapper = mapper;
+//        System.out.println("Mapper == null ? " + (mapper == null ? "yes" : "no"));
         this.mailService = mailService;
     }
 
@@ -63,51 +63,55 @@ public class HomeController {
      * @param response  响应对象
      * @return 登录成功就返回实体内容
      */
-@PostMapping("/login")
-public ResultVO postLogin(@RequestBody LoginForm loginForm, HttpServletResponse response, HttpSession session) {
-    // check format
-    if (StringUtil.isEmpty(loginForm.getEmail()) || !Validator.isEmail(loginForm.getEmail())) {
-        return ResultVO.failed(StatusCode.S400_INVALID_PARAMETERS_FORMAT, "邮箱格式验证失败，请确认后重新登录", null);
+    @PostMapping("/login")
+    public ResultVO postLogin(@RequestBody Map<String, String> loginForm, HttpServletResponse response, HttpSession session) {
+        String email = loginForm.getOrDefault("email", "");
+        String password = loginForm.getOrDefault("password", "");
+        String captcha = loginForm.getOrDefault("captcha", "");
+
+        // check bot
+        String captchaInSession = session.getAttribute("captcha-pic") != null
+            ? String.valueOf(session.getAttribute("captcha-pic")).toLowerCase()
+            : "";
+        if (StringUtil.isEmpty(captchaInSession)) {
+            return ResultVO.failed(StatusCode.S400_INVALID_CAPTCHA, "请先获取验证码并在其有效时间段内提交验证", null);
+        }
+        captcha = captcha != null ? captcha.toLowerCase() : "";
+        if (StringUtil.isEmpty(captcha) || !captcha.equals(captchaInSession)) {
+            return ResultVO.failed(StatusCode.S400_INVALID_CAPTCHA, "验证码验证失败", null);
+        }
+
+        // check format
+        if (StringUtil.isEmpty(email) || !Validator.isEmail(email)) {
+            return ResultVO.failed(StatusCode.S400_INVALID_PARAMETERS_FORMAT, "邮箱格式验证失败，请确认后重新登录", null);
+        }
+        if (StringUtil.isEmpty(password) || !Validator.isPassword(password)) {
+            return ResultVO.failed(StatusCode.S400_INVALID_PARAMETERS_FORMAT, "密码格式验证失败，请确认后重新登录", null);
+        }
+
+        try {
+            Account result = accountService.loginCheck(email, password);
+            response.addCookie(
+                new Cookie(
+                    TokenUtil.AUTHORIZATION,
+                    TokenUtil.generateTokenWithPrefix(new TokenUtil.JwtClaimsData() {{
+                        setId(result.getId());
+                    }})
+                ) {{
+                    setMaxAge(TokenUtil.EXPIRATION_TIME_IN_SECOND);
+                }}
+            );
+            return ResultVO.success(result);
+        } catch (NoSuchAccountException e) {
+            return ResultVO.failed(StatusCode.S401_NO_SUCH_ACCOUNT, e.getMessage(), null);
+        } catch (AuthFailedException e) {
+            return ResultVO.failed(StatusCode.S401_UNMATCHED_PRIVATE_KEY, e.getMessage(), null);
+        } catch (DisabledAccountException e) {
+            return ResultVO.failed(StatusCode.S401_DISABLED_ACCOUNT, e.getMessage(), null);
+        } catch (Exception e) {
+            return ResultVO.failed(StatusCode.S500_INTERNAL_SERVER_ERROR, e.getMessage(), null);
+        }
     }
-    if (StringUtil.isEmpty(loginForm.getPassword()) || !Validator.isPassword(loginForm.getPassword())) {
-        return ResultVO.failed(StatusCode.S400_INVALID_PARAMETERS_FORMAT, "密码格式验证失败，请确认后重新登录", null);
-    }
-    String captchaInSession = session.getAttribute("captcha-pic") != null
-        ? String.valueOf(session.getAttribute("captcha-pic")).toLowerCase()
-        : "";
-    log.info("captcha: {}", captchaInSession);
-    if (StringUtil.isEmpty(captchaInSession)) {
-        return ResultVO.failed(StatusCode.S400_INVALID_CAPTCHA, "请先获取验证码并在其有效时间段内提交验证", null);
-    }
-    String captcha = loginForm.getCaptcha() != null
-        ? loginForm.getCaptcha().toLowerCase()
-        : "";
-    if (StringUtil.isEmpty(captcha) || !captcha.equals(captchaInSession)) {
-        return ResultVO.failed(StatusCode.S400_INVALID_CAPTCHA, "验证码验证失败", null);
-    }
-    try {
-        Account result = accountService.loginCheck(loginForm.getEmail(), loginForm.getPassword());
-        response.addCookie(
-            new Cookie(
-                TokenUtil.AUTHORIZATION,
-                TokenUtil.generateTokenWithPrefix(new TokenUtil.JwtClaimsData() {{
-                    setId(result.getId());
-                }})
-            ) {{
-                setMaxAge(TokenUtil.EXPIRATION_TIME_IN_SECOND);
-            }}
-        );
-        return ResultVO.success(result);
-    } catch (NoSuchAccountException e) {
-        return ResultVO.failed(StatusCode.S401_NO_SUCH_ACCOUNT, e.getMessage(), null);
-    } catch (AuthFailedException e) {
-        return ResultVO.failed(StatusCode.S401_UNMATCHED_PRIVATE_KEY, e.getMessage(), null);
-    } catch (DisabledAccountException e) {
-        return ResultVO.failed(StatusCode.S401_DISABLED_ACCOUNT, e.getMessage(), null);
-    } catch (Exception e) {
-        return ResultVO.failed(StatusCode.S500_INTERNAL_SERVER_ERROR, e.getMessage(), null);
-    }
-}
 
     /**
      * POST /accounts
@@ -118,6 +122,8 @@ public ResultVO postLogin(@RequestBody LoginForm loginForm, HttpServletResponse 
      */
     @PostMapping("/register")
     public ResultVO postRegister(@RequestBody RequestForm.RegisterForm form) {
+
+
         // check format
         if (StringUtil.isEmpty(form.getEmail()) || !Validator.isEmail(form.getEmail())) {
             return ResultVO.failed(StatusCode.S400_INVALID_PARAMETERS_FORMAT, "邮箱格式验证失败，请确认后重新登录", null);
@@ -199,6 +205,8 @@ public ResultVO postLogin(@RequestBody LoginForm loginForm, HttpServletResponse 
         String filePath = "D:/Downloads/";
         File tempDir = new File(filePath);
         if (!tempDir.exists()) return ResultVO.failed(StatusCode.S500_FILE_STORAGE_ERROR, "InvalidTempDirectory", null);
+
+        Map<String, Object> responseData = new HashMap<>();
 
         String[] messages = new String[files.length];
         for (int i = 0; i < files.length; i++) {

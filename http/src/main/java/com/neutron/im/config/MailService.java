@@ -17,14 +17,13 @@ import java.io.File;
 @Component
 public class MailService {
     private final JavaMailSender mailSender;
+    @Value("${spring.mail.username}")
+    private String from;
 
     @Autowired
     MailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
-
-    @Value("${spring.mail.username}")
-    private String from;
 
     /**
      * 文本邮件
