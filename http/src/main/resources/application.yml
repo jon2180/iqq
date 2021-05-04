@@ -1,0 +1,14 @@
+spring:
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      write-dates-as-timestamps: true
+  profiles:
+    active: prod, dev
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+  configuration:
+    use-generated-keys: true
+    use-column-label: true
