@@ -1,6 +1,7 @@
 package com.neutron.im.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.neutron.im.config.AppConstants;
 import com.neutron.im.config.MailService;
 import com.neutron.im.core.ResultVO;
 import com.neutron.im.core.StatusCode;
@@ -22,8 +23,9 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -101,6 +103,8 @@ public class HomeController {
                     setMaxAge(TokenUtil.EXPIRATION_TIME_IN_SECOND);
                 }}
             );
+            if (result.getAvatar() != null && "".equals(result.getAvatar()))
+                result.setAvatar(AppConstants.getAvatarUrl(result.getAvatar()));
             return ResultVO.success(result);
         } catch (NoSuchAccountException e) {
             return ResultVO.failed(StatusCode.S401_NO_SUCH_ACCOUNT, e.getMessage(), null);
@@ -206,13 +210,13 @@ public class HomeController {
         File tempDir = new File(filePath);
         if (!tempDir.exists()) return ResultVO.failed(StatusCode.S500_FILE_STORAGE_ERROR, "InvalidTempDirectory", null);
 
-        Map<String, Object> responseData = new HashMap<>();
-
-        String[] messages = new String[files.length];
+        List<HashMap<String, Object>> messages = new ArrayList<>();
         for (int i = 0; i < files.length; i++) {
+            HashMap<String, Object> responseData = new HashMap<>();
+            String message;
             MultipartFile file = files[i];
             if (file.isEmpty()) {
-                messages[i] = "上传第" + (i + 1) + "文件失败, 文件为空";
+                message = "上传第" + (i + 1) + "文件失败, 文件为空";
                 continue;
             }
             String fileName = file.getOriginalFilename();
@@ -220,13 +224,15 @@ public class HomeController {
             File dest = new File(filePath + fileName);
             try {
                 file.transferTo(dest);
-                messages[i] = ("第" + (i + 1) + "个文件上传成功");
+                message = ("第" + (i + 1) + "个文件上传成功");
             } catch (IOException e) {
                 log.error(e.toString(), e);
-                messages[i] = "上传第" + (i++) + "个文件失败，转换失败";
+                message = "上传第" + (i++) + "个文件失败，转换失败";
             }
+            responseData.put("message", message);
+            messages.add(responseData);
         }
-        log.info(Arrays.toString(messages));
+//        log.info(Arrays.toString(messages));
         return ResultVO.success(messages);
     }
 }

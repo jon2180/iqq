@@ -24,7 +24,7 @@ public class ServiceExceptionHandler {
     @ResponseBody
     public ResultVO handleException(Exception e) {
         e.printStackTrace();
-        return ResultVO.failed(StatusCode.S500_LOGIC_ERROR, e.getMessage(), e.getStackTrace());
+        return ResultVO.failed(StatusCode.S500_LOGIC_ERROR, e.getMessage());
     }
 
     @ExceptionHandler({RuntimeException.class})
@@ -42,6 +42,6 @@ public class ServiceExceptionHandler {
     @ResponseBody
     public ResultVO handle400Exception(RuntimeException e) {
         e.printStackTrace();
-        return ResultVO.failed(StatusCode.S400_EMPTY_PARAMETER, e.getMessage(), e.getStackTrace());
+        return ResultVO.failed(StatusCode.S400_EMPTY_PARAMETER, e.getMessage());
     }
 }

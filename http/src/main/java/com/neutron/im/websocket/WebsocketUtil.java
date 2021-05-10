@@ -1,6 +1,5 @@
 package com.neutron.im.websocket;
 
-import com.neutron.im.core.entity.Account;
 import com.neutron.im.core.entity.Message;
 import com.neutron.im.core.entity.RecentChat;
 import com.neutron.im.service.AccountService;
@@ -12,12 +11,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Component
 public class WebsocketUtil {
+    /**
+     * 消息内容类型
+     */
     private static final Map<String, Integer> CONTENT_TYPE_MAP = new HashMap<>() {{
         put("text", 0);
         put("image", 1);
@@ -29,6 +30,11 @@ public class WebsocketUtil {
     private static final Map<Integer, String> chatTypeMap = new HashMap<>() {{
         put(0, "single");
         put(1, "group");
+    }};
+
+    private static final Map<String, Integer> chatTypeToId = new HashMap<>() {{
+        put("single", 0);
+        put("group", 1);
     }};
 
     public static MessageService messageService;
@@ -61,7 +67,8 @@ public class WebsocketUtil {
         Map<String, Object> messageBody = decodedMessage.getBody();
         Message message = new Message() {{
             setChat_id((String) messageBody.get("chat_id"));
-            setChat_type(CONTENT_TYPE_MAP.get(decodedMessage.getType()));
+            // FIXME 会话类型
+            setChat_type(chatTypeToId.get(decodedMessage.getType()));
             setSender_id((String) messageBody.get("sender_id"));
             setReceiver_id((String) messageBody.get("receiver_id"));
             setContent_type(CONTENT_TYPE_MAP.getOrDefault((String) messageBody.get("content_type"), 4));

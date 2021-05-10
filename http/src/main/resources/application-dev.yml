@@ -4,6 +4,8 @@ server:
     context-path: /
 
 spring:
+  mvc:
+    static-path-pattern: /static/**
   datasource:
     druid:
       username: xxx

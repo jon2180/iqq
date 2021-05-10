@@ -101,23 +101,23 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             response.setHeader("Access-Control-Max-Age", "3600");
             response.setHeader("Access-Control-Allow-Credentials", "true");
             response.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, Connection, Upgrade");
-            String referer = request.getHeader("Referer");
-            String host = request.getHeader("Host");
-            String userAgent = request.getHeader("User-Agent");
+//            String referer = request.getHeader("Referer");
+//            String host = request.getHeader("Host");
+//            String userAgent = request.getHeader("User-Agent");
 
             //            logger.info("protocol: " + request.getProtocol());
 
             //            || StringUtil.isEmpty(referer)
-            if (StringUtil.isEmpty(host) || StringUtil.isEmpty(userAgent)) {
-                doResponse(
-                    response,
-                    403,
-                    ResultVO.failed(40300, "浏览器核验失败", null)
-                );
-                return;
-            }
+//            if (StringUtil.isEmpty(host) || StringUtil.isEmpty(userAgent)) {
+//                doResponse(
+//                    response,
+//                    403,
+//                    ResultVO.failed(40300, "浏览器核验失败", null)
+//                );
+//                return;
+//            }
 
-            if ("OPTIONS".equals(request.getMethod())) {
+            if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
                 doResponse(
                     response,
                     200,
