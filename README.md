@@ -1,32 +1,37 @@
-# fake-qq
+# Neutron IM 桌面端和服务器端 Neutron IM Server & Desktop
 
 ## 一、概述
 
-### 构建系统
+Neutron IM 是一个即时通讯应用，分别有[桌面端](//github.com/jon2180/neutron-im-server-and-desktop/tree/main/desktop)
+，和[网页端](//github.com/jon2180/neutron-im-web)。此外，如图片等静态资源文件，因须占用大量的 IO
+性能，因此使用了独立为一个仓库 [neutron-im-static-server](//github.com/jon2180/neutron-im-static-server)。
 
-基于 Gradle
+## 二、项目结构
 
-### 实现技术
+本项目构建系统为 Gradle 7.x （不断更新）。
 
-- Java NIO通信
-- MySQL 关系型数据库
-- Java Swing 图形界面编程
-- JUnit 单元测试框架
+### 二·一 模块系统
 
-### 结构
+- `core` 模块：其他项目都有可能会用到的依赖
+- `desktop` 模块：桌面端实现，基于 Swing 实现。
+- `server` 模块：桌面端对应的服务端实现，基于 NIO 与客户端实现通信，序列化方案采用 protobuf。
+- `http` 模块：网页端对应后台服务，基于 Spring Boot 框架和 WebSocket 协议通信。
 
-common        # 前后端共有信息
+### 二·二 技术方案
 
-chat-server   # 消息的实时发送接受
-http-server   # 登录注册等功能以及静态资源的处理
+- `MySQL 8.x` 持久化关系型数据库
+- `Redis` 基于内存的键值对存储数据库
 
-client # 客户端UI
+## 三、快速开始
 
-### 预览
+1. 导入数据库 `doc/sql` 中最新版本的 SQL 脚本
+2. 配置好 `http` 和 `server` 模块中的 SQL 配置和 Redis 配置
+3. 构建项目
+4. 如果是运行桌面端，则运行 `desktop` 和 `server` 中的入口文件；若是运行网页端的服务端，则运行 `http` 中的入口文件，并同时开启网页端和静态服务器端
 
-![预览](doc/qq-v1.gif)
+## 功能实现情况
 
-### 功能实现情况
+惨不忍睹，客观笑笑就行。
 
 - [ ] 文字聊天
 - [ ] 图片发送
