@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * redis操作工具类.</br>
  * (基于RedisTemplate)
@@ -28,7 +30,7 @@ public class RedisUtil {
      * @return 取值
      */
     public String get(final String key) {
-        return redisTemplate.opsForValue().get(key);
+        return (String) redisTemplate.opsForValue().get(key);
     }
 
     /**
@@ -71,5 +73,41 @@ public class RedisUtil {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public boolean setHashMap(String redisKey, String hashKey, String value) {
+        try {
+            redisTemplate.opsForHash().put(redisKey, hashKey, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getHashValue(String redisKey, String hashKey) {
+        if (StringUtil.isEmpty(redisKey)) {
+            return null;
+        }
+        if (hashKey == null) {
+            return null;
+        }
+        try {
+            return (String) redisTemplate.opsForHash().get(redisKey, hashKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Map<Object, Object> getHashes(String redisKey) {
+        if (StringUtil.isEmpty(redisKey)) {
+            return null;
+        }
+        try {
+            return redisTemplate.opsForHash().entries(redisKey);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

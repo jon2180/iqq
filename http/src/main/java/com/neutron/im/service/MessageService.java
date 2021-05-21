@@ -5,7 +5,9 @@ import com.neutron.im.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MessageService {
@@ -26,5 +28,15 @@ public class MessageService {
 
     public List<Message> findById(String id) {
         return messageMapper.findByChatId(id);
+    }
+
+    public long countAfter(String chatId, long time) {
+        Map<String, Object> result = messageMapper.countAfter(chatId, new Timestamp(time));
+        try {
+            return (Long) result.getOrDefault("count", 0L);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

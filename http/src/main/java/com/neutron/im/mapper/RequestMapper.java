@@ -7,15 +7,17 @@ import java.util.List;
 
 @Mapper
 public interface RequestMapper {
-    Request findOneById(int id);
+    Request findOneById(String id);
 
-    List<Request> findByOriginatorId(int id);
+    List<Request> findByOriginatorId(String id);
 
-    List<Request> findByTargetId(int id);
+    List<Request> findByTargetId(String id);
 
     int insertRequest(Request request);
 
     boolean updateRequest(Request request);
 
-    int deleteRequest(int id);
+    int deleteRequest(String id);
+
+    Request findOne(String firstId, String secondId);
 }

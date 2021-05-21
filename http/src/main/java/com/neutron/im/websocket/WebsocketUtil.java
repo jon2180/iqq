@@ -5,6 +5,10 @@ import com.neutron.im.core.entity.RecentChat;
 import com.neutron.im.service.AccountService;
 import com.neutron.im.service.ChatsService;
 import com.neutron.im.service.MessageService;
+import com.neutron.im.websocket.handler.BaseHandler;
+import com.neutron.im.websocket.handler.DefaultHandler;
+import com.neutron.im.websocket.handler.GroupChatHandler;
+import com.neutron.im.websocket.handler.SingleChatHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,47 +16,53 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 public class WebsocketUtil {
+
     /**
      * 消息内容类型
      */
     private static final Map<String, Integer> CONTENT_TYPE_MAP = new HashMap<>() {{
-        put("text", 0);
-        put("image", 1);
-        put("voice", 2);
-        put("video", 3);
+        put(ChatMessageType.TEXT.getData(), 0);
+        put(ChatMessageType.IMAGE.getData(), 1);
+        put(ChatMessageType.AUDIO.getData(), 2);
+        put(ChatMessageType.VIDEO.getData(), 3);
+        put(ChatMessageType.CODE_SNIPS.getData(), 3);
+        put(ChatMessageType.FAVORITE.getData(), 3);
         put("other", 4);
     }};
-
     private static final Map<Integer, String> chatTypeMap = new HashMap<>() {{
         put(0, "single");
         put(1, "group");
     }};
-
     private static final Map<String, Integer> chatTypeToId = new HashMap<>() {{
         put("single", 0);
         put("group", 1);
     }};
-
+    public static ConcurrentHashMap<String, BaseHandler> handlersMap = new ConcurrentHashMap<>();
+    public static DefaultHandler defaultHandler;
     public static MessageService messageService;
     public static AccountService accountService;
     public static ChatsService chatsService;
 
     @Autowired
-    WebsocketUtil(MessageService service, AccountService rwaAccountService, ChatsService chatsService) {
+    WebsocketUtil(
+        MessageService service,
+        AccountService rwaAccountService,
+        ChatsService chatsService,
+        DefaultHandler defaultHandler,
+        SingleChatHandler singleChatHandler,
+        GroupChatHandler groupChatHandler
+    ) {
         WebsocketUtil.messageService = service;
         WebsocketUtil.accountService = rwaAccountService;
         WebsocketUtil.chatsService = chatsService;
-    }
-
-    public static void send() {
-//        List<Account> accounts = accountService.searchFuzzily("i");
-//        for (var account : accounts) {
-//            System.out.println(account);
-//        }
+        WebsocketUtil.defaultHandler = defaultHandler;
+        handlersMap.put("single", singleChatHandler);
+        handlersMap.put("group", groupChatHandler);
     }
 
     public static void saveMessageToDatabase(WebSocketMessage decodedMessage) {
@@ -96,6 +106,40 @@ public class WebsocketUtil {
             if (!val) {
                 log.error("Update Chat Failed");
             }
+        }
+    }
+
+    public enum ChatMessageType {
+        TEXT("text"),
+        IMAGE("image"),
+        AUDIO("audio"),
+        VIDEO("video"),
+        CODE_SNIPS("codesnips"),
+        FAVORITE("favorite");
+
+        private final String data;
+
+        ChatMessageType(String data) {
+            this.data = data;
+        }
+
+        public String getData() {
+            return data;
+        }
+    }
+
+    public enum MessageType {
+        SINGLE("single"),
+        GROUP("group");
+
+        private final String data;
+
+        MessageType(String data) {
+            this.data = data;
+        }
+
+        public String getData() {
+            return data;
         }
     }
 }

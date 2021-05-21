@@ -96,7 +96,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
             String origin = request.getHeader("origin");
             String allowOrigin = "http://localhost:3000";
-            response.setHeader("Access-Control-Allow-Origin", origin != null ? origin : allowOrigin);
+            response.setHeader("Access-Control-Allow-Origin", !StringUtil.isEmpty(origin) ? origin : allowOrigin);
             response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
             response.setHeader("Access-Control-Max-Age", "3600");
             response.setHeader("Access-Control-Allow-Credentials", "true");

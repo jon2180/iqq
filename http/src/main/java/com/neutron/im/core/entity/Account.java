@@ -62,6 +62,7 @@ public class Account implements UserDetails {
      */
     private Timestamp birthday;
 
+    private int gender;
     /**
      * 注册时间
      */

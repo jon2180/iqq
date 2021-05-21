@@ -23,10 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/")
@@ -117,6 +114,12 @@ public class HomeController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResultVO postLogout(HttpServletResponse resp) {
+//        CookieUtil.set(resp, "Authorization", "", 0);
+        return ResultVO.success("Logout successfully");
+    }
+
     /**
      * POST /accounts
      * 用户注册
@@ -126,8 +129,6 @@ public class HomeController {
      */
     @PostMapping("/register")
     public ResultVO postRegister(@RequestBody RequestForm.RegisterForm form) {
-
-
         // check format
         if (StringUtil.isEmpty(form.getEmail()) || !Validator.isEmail(form.getEmail())) {
             return ResultVO.failed(StatusCode.S400_INVALID_PARAMETERS_FORMAT, "邮箱格式验证失败，请确认后重新登录", null);
@@ -202,37 +203,85 @@ public class HomeController {
     }
 
     @PostMapping("/upload/{type}")
-    public ResultVO uploadImage(@PathVariable String type, @RequestParam("file") MultipartFile[] files) {
+    public ResultVO uploadImage(
+        @PathVariable String type,
+        @RequestParam("file") MultipartFile[] files,
+        @RequestAttribute TokenUtil.JwtClaimsData claims) {
         if (files == null) {
             return ResultVO.failed(StatusCode.S400_EMPTY_PARAMETER, "No Files to Upload", null);
         }
-        String filePath = "D:/Downloads/";
+        String filePath = AppConstants.STATIC_FILE_STORAGE_PATH;
         File tempDir = new File(filePath);
         if (!tempDir.exists()) return ResultVO.failed(StatusCode.S500_FILE_STORAGE_ERROR, "InvalidTempDirectory", null);
 
         List<HashMap<String, Object>> messages = new ArrayList<>();
         for (int i = 0; i < files.length; i++) {
-            HashMap<String, Object> responseData = new HashMap<>();
-            String message;
             MultipartFile file = files[i];
+            HashMap<String, Object> currResult = new HashMap<>();
+            String message;
+            String filename = null;
             if (file.isEmpty()) {
                 message = "上传第" + (i + 1) + "文件失败, 文件为空";
-                continue;
+            } else {
+                String fileName = claims.getId() + "-" +
+                    StringUtil.generate(8) +
+                    Objects.requireNonNull(
+                        file.getOriginalFilename()
+                    ).substring(file.getOriginalFilename().lastIndexOf("."));
+                filename = fileName;
+                try {
+                    file.transferTo(new File(filePath + "/" + fileName));
+                    message = ("第" + (i + 1) + "个文件上传成功");
+                } catch (IOException e) {
+                    log.error(e.toString(), e);
+                    message = "上传第" + (i++) + "个文件失败，转换失败";
+                }
             }
-            String fileName = file.getOriginalFilename();
-
-            File dest = new File(filePath + fileName);
-            try {
-                file.transferTo(dest);
-                message = ("第" + (i + 1) + "个文件上传成功");
-            } catch (IOException e) {
-                log.error(e.toString(), e);
-                message = "上传第" + (i++) + "个文件失败，转换失败";
-            }
-            responseData.put("message", message);
-            messages.add(responseData);
+            currResult.put("message", message);
+            currResult.put("url", AppConstants.getAssetUrl(filename));
+            currResult.put("filename", filename);
+            messages.add(currResult);
         }
-//        log.info(Arrays.toString(messages));
         return ResultVO.success(messages);
+    }
+
+    @PostMapping("/chat-audio")
+    public ResultVO postChatAudio(MultipartFile file, @RequestAttribute TokenUtil.JwtClaimsData claims) {
+        if (file == null || file.isEmpty()) {
+            return ResultVO.failed(StatusCode.S400_EMPTY_PARAMETER, "No Audio to Upload", null);
+        }
+        String filePath = AppConstants.STATIC_FILE_STORAGE_PATH;
+        File tempDir = new File(filePath);
+        if (!tempDir.exists() && !tempDir.mkdir()) {
+            return ResultVO.failed(StatusCode.S500_FILE_STORAGE_ERROR, "InvalidTempDirectory", null);
+        }
+
+        HashMap<String, Object> responseData = new HashMap<>(4);
+        String message = null;
+        String fileName = null;
+        try {
+            fileName = claims.getId()
+                + "-"
+                + StringUtil.generate(8)
+                + Objects.requireNonNull(file.getOriginalFilename())
+                .substring(file.getOriginalFilename().lastIndexOf("."));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fileName = StringUtil.generate(16).toString() + ".webm";
+        }
+
+        try {
+            file.transferTo(new File(filePath + "/" + fileName));
+            message = ("文件上传成功");
+        } catch (Exception e) {
+//            log.error(e.toString(), e);
+            e.printStackTrace();
+            message = "文件失败，转换失败";
+        }
+
+        responseData.put("message", message);
+        responseData.put("filename", fileName);
+        responseData.put("url", AppConstants.getAssetUrl(fileName));
+        return ResultVO.success(responseData);
     }
 }

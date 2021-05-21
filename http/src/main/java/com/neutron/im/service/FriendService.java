@@ -41,7 +41,7 @@ public class FriendService {
      */
     @Transactional
     public Friend updateFriend(String myId, String id, String category, int status) {
-        Friend friend = friendMapper.findByFIDs(myId, id);
+        Friend friend = friendMapper.findOne(myId, id);
         if (friend == null) {
             return null;
         }
@@ -74,6 +74,10 @@ public class FriendService {
 
     public boolean updateOne(Friend friend) {
         return friendMapper.updateOne(friend);
+    }
+
+    public Friend findOne(String firstId, String secondId) {
+        return friendMapper.findOne(firstId, secondId);
     }
 
 }

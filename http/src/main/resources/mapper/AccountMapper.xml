@@ -10,6 +10,7 @@
                avatar,
                password,
                birthday,
+               gender,
                reg_time,
                status,
                extra
@@ -20,8 +21,9 @@
 
     <insert id="insertAccount" parameterType="com.neutron.im.core.entity.Account" useGeneratedKeys="true"
             keyProperty="id">
-        insert into accounts(id,email,nickname,signature,tel,avatar,password,birthday)
-        values (replace(uuid(), '-', '') ,#{email},#{nickname},#{signature},#{tel},#{avatar},#{password},#{birthday})
+        insert into accounts(id,email,nickname,signature,tel,avatar,password,birthday,gender)
+        values (replace(uuid(), '-', '') ,#{email},#{nickname},#{signature},#{tel},#{avatar},#{password},#{birthday},
+        #{gender})
         <!--        insert into accounts-->
         <!--        <trim prefix="(" suffix=")" suffixOverrides=",">-->
         <!--            uid,email,nickname,signature,tel,avatar,password,salt,birthday)-->
@@ -41,6 +43,7 @@
             <if test="avatar != null">avatar=#{avatar},</if>
             <if test="password != null">password=#{password},</if>
             <if test="birthday != null">birthday=#{birthday},</if>
+            <if test="gender == 0 or gender==1 or gender == 2">gender=#{gender},</if>
             <if test="status != null">status=#{status}</if>
             <if test="extra != null">extra=#{extra}</if>
         </set>

@@ -17,11 +17,11 @@ public interface FriendMapper {
 
     int insertOne(Friend friend);
 
-    @Insert("insert into friends(id, `fid_1`, `fid_2`) values(replace(uuid(), '-','') #{fid1},#{fid2})")
+    @Insert("insert into friends(id, `fid_1`, `fid_2`) values(replace(uuid(), '-',''), #{fid1},#{fid2})")
     int insertOneByDefault(String fid1, String fid2);
 
     @Delete("delete from friends where id = #{id}")
     int deleteOneById(String id);
 
-    Friend findByFIDs(String myId, String id);
+    Friend findOne(String myId, String id);
 }

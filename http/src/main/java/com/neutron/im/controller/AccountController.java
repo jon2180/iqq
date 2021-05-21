@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class AccountController {
      * @return 用户列表
      */
     @GetMapping("/")
-    public ResultVO getAll(@RequestAttribute TokenUtil.JwtClaimsData claims) {
+    public ResultVO getSelfInfo(@RequestAttribute TokenUtil.JwtClaimsData claims) {
         Account account = accountService.findByID(claims.getId());
         if (account.getAvatar() != null && !"".equals(account.getAvatar())) {
             account.setAvatar(AppConstants.getAvatarUrl(account.getAvatar()));
@@ -54,18 +55,14 @@ public class AccountController {
      */
     @GetMapping("/{id}")
     public ResultVO getAccountInfo(@PathVariable String id, @RequestAttribute("claims") TokenUtil.JwtClaimsData data) {
-        if (id == null) {
-            log.info("Token Claims: {}", data);
+        if (StringUtil.isEmpty(id)) {
             return ResultVO.failed(StatusCode.S400_EMPTY_PARAMETER, "Empty Parameter: Account Id", null);
         }
         Account account = accountService.findByID(id);
         if (account == null) {
             return ResultVO.failed(StatusCode.S404_NOT_FOUND, "No Specific Account", null);
         }
-        if (account.getAvatar() != null) {
-            account.setAvatar(AppConstants.getAvatarUrl(account.getAvatar()));
-        }
-
+        account.setAvatar(AppConstants.getAvatarUrl(account.getAvatar()));
         return ResultVO.success(account);
     }
 
@@ -79,7 +76,7 @@ public class AccountController {
     public ResultVO deleteAccount(@RequestAttribute TokenUtil.JwtClaimsData claims) {
         return accountService.deleteAccountById(claims.getId())
             ? ResultVO.success("OK")
-            : ResultVO.failed(40001, "Delete Failed", null);
+            : ResultVO.failed(StatusCode.S400_EMPTY_PARAMETER, "Delete Failed", null);
     }
 
     /**
@@ -95,21 +92,55 @@ public class AccountController {
         final String nickname = (String) map.getOrDefault("nickname", "");
         final String signature = (String) map.getOrDefault("signature", "");
         final String gender = (String) map.getOrDefault("gender", "secret");
-        final String birthday = (String) map.getOrDefault("birthday", "");
+        final Long birthday = (Long) map.getOrDefault("birthday", null);
 
         final Account account = accountService.findByID(claims.getId());
+
         if (!StringUtil.isEmpty(nickname))
             account.setNickname(nickname);
         if (!StringUtil.isEmpty(signature))
             account.setSignature(signature);
-        if (!StringUtil.isEmpty(gender))
+        if (!StringUtil.isEmpty(gender)) {
+            int val = 0;
+            switch (gender) {
+                case "female":
+                    val = 1;
+                    break;
+                case "male":
+                    val = 2;
+                    break;
+                case "secret":
+                default:
+            }
+            account.setGender(val);
             System.out.println(gender);
-        if (!StringUtil.isEmpty(birthday))
+        }
+        if (birthday != null) {
             System.out.println(birthday);
+            try {
+                account.setBirthday(new Timestamp(birthday));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
 
         return accountService.updateAccountById(account)
             ? ResultVO.success("OK")
             : ResultVO.failed(StatusCode.S400_BAD_REQUEST, "更新出错", null);
+    }
+
+    @PutMapping("/bindings")
+    public ResultVO putBindings(
+        @RequestAttribute TokenUtil.JwtClaimsData claims,
+        @RequestBody Map<String, Object> req
+    ) {
+        final String github = (String) req.getOrDefault("github", "");
+        final String jianshu = (String) req.getOrDefault("jianshu", "");
+        final String zhihu = (String) req.getOrDefault("zhihu", "");
+        final String qq = (String) req.getOrDefault("qq", "");
+
+        return ResultVO.success("Ok,We received something, but we did nothing.");
     }
 
     @PostMapping("/avatar")

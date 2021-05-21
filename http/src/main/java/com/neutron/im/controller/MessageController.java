@@ -50,6 +50,8 @@ public class MessageController {
     public ResultVO getChatHistory(@PathVariable String id, @RequestAttribute TokenUtil.JwtClaimsData claims) {
 //        List<Message> messages = messageService.findBySenderAndReceiver(claims.getId(), id);
         List<Message> messages = messageService.findById(id);
+
+
         return ResultVO.success(messages);
     }
 

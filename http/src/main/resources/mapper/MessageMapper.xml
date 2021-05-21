@@ -48,4 +48,11 @@
         where chat_id = #{chatId, jdbcType=VARCHAR}
         order by time
     </select>
+
+    <select id="countAfter" resultType="java.util.Map">
+        select count(*) count
+        from messages
+        where time > #{time, jdbcType=TIMESTAMP}
+          and chat_id = #{chatId, jdbcType=VARCHAR};
+    </select>
 </mapper>

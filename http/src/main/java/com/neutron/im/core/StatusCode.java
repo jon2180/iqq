@@ -31,10 +31,7 @@ public enum StatusCode {
     S500_INTERNAL_SERVER_ERROR(50000),
     S500_SQL_ERROR(50001),
     S500_LOGIC_ERROR(50002),
-    S500_FILE_STORAGE_ERROR(50003),
-
-
-    ;
+    S500_FILE_STORAGE_ERROR(50003);
 
     private final int code;
 

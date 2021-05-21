@@ -11,15 +11,22 @@ import java.util.List;
 @Service
 public class RequestService {
 
-    public Request findOneById(int id) {
+    private final RequestMapper requestMapper;
+
+    @Autowired
+    public RequestService(RequestMapper requestMapper) {
+        this.requestMapper = requestMapper;
+    }
+
+    public Request findOneById(String id) {
         return requestMapper.findOneById(id);
     }
 
-    public List<Request> findByOriginatorId(int id) {
+    public List<Request> findByOriginatorId(String id) {
         return requestMapper.findByOriginatorId(id);
     }
 
-    public List<Request> findByTargetId(int id) {
+    public List<Request> findByTargetId(String id) {
         return requestMapper.findByTargetId(id);
     }
 
@@ -42,14 +49,11 @@ public class RequestService {
         return requestMapper.updateRequest(request);
     }
 
-    public int deleteRequest(int id) {
+    public int deleteRequest(String id) {
         return requestMapper.deleteRequest(id);
     }
 
-    private final RequestMapper requestMapper;
-
-    @Autowired
-    public RequestService(RequestMapper requestMapper) {
-        this.requestMapper = requestMapper;
+    public Request findOne(String firstId, String secondId) {
+        return requestMapper.findOne(firstId, secondId);
     }
 }

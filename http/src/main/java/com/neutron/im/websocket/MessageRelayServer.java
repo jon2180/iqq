@@ -1,5 +1,6 @@
 package com.neutron.im.websocket;
 
+import com.neutron.im.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -21,12 +22,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class MessageRelayServer {
 
-    private static final WSMessageParser messageParser = new WSMessageParser();
-    private static final ConcurrentHashMap<String, MessageRelayServer> clientMap = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, List<Session>> groupMap = new ConcurrentHashMap<>();
+    public static final WSMessageParser messageParser = new WSMessageParser();
+    public static final ConcurrentHashMap<String, MessageRelayServer> clientMap = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, List<Session>> groupMap = new ConcurrentHashMap<>();
 
     /**
-     * z
      * 记录当前在线连接数
      */
     private Session session;
@@ -62,6 +62,7 @@ public class MessageRelayServer {
         return send(session, messageParser.encode(message));
     }
 
+    @Deprecated
     private static int send(List<Session> sessionList, String message) {
         if (sessionList == null) {
             log.error("IllegalArguments: Session Not Null");
@@ -76,7 +77,7 @@ public class MessageRelayServer {
         return sentCount;
     }
 
-    private static int send(List<Session> sessionList, WebSocketMessage message) {
+    public static int send(List<Session> sessionList, WebSocketMessage message) {
         return send(sessionList, messageParser.encode(message));
     }
 
@@ -99,11 +100,24 @@ public class MessageRelayServer {
      * 广播消息
      * 发送至每一个在线用户
      */
+    @Deprecated
     public static void broadcast(String message) {
         for (var item : clientMap.entrySet()) {
             //同步异步说明参考：http://blog.csdn.net/who\_is\_xiaoming/article/details/53287691
             item.getValue().session.getAsyncRemote().sendText(message);//异步发送消息.
         }
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public long getLastReceiveTime() {
+        return lastReceiveTime;
     }
 
     /**
@@ -159,78 +173,56 @@ public class MessageRelayServer {
      */
     @OnMessage
     public void onMessage(Session session, String message) {
-        if (message == null || message.equals("")) {
+        if (StringUtil.isEmpty(message)) {
             log.warn("没有收到有效数据");
             return;
         }
-
         lastReceiveTime = System.currentTimeMillis();
 
-        log.info("服务端收到 #{}的消息: {}", this.id, message);
+        boolean isJson = message.startsWith("{\"") && message.endsWith("}");
 
         // 检查是不是特殊指令
         switch (message) {
             case "PING":
             case "PONG":
-                // 心跳响应
-                send(session, "PONG");
+                heartBeat();
                 break;
             case "QUIT":
-                // 服务端断开连接
-                clientMap.remove(this.id);
-                try {
-                    session.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                closeConnection();
                 break;
             default:
                 // 默认情况应该是用 JSON 格式处理数据
-                handleWebSocketMessage(message);
-                break;
+                handleMessage(message);
         }
     }
 
-    public void handleWebSocketMessage(String rawMessage) {
-        WebSocketMessage decodedMessage = messageParser.decode(rawMessage);
+    // 心跳响应
+    public void heartBeat() {
+        send(session, "PONG");
+    }
 
-        if (decodedMessage == null || decodedMessage.getType() == null || "".equals(decodedMessage.getType())) {
-            log.info("未知类型的消息：当作心跳包处理，原路原格式返回");
-            send(session, "Invalid Format: No Invalid Message Type");
+    public void closeConnection() {
+        // 服务端断开连接
+        clientMap.remove(this.id);
+        try {
+            session.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleMessage(String rawMessage) {
+        WebSocketMessage decodedMessage = messageParser.decode(rawMessage);
+        if (decodedMessage == null || StringUtil.isEmpty(decodedMessage.getType())) {
+            log.info("未知类型的消息：当作心跳包处理");
+            send(session, "CMD: Invalid Format: No Invalid Message Type");
             return;
         }
-
-        switch (decodedMessage.getType()) {
-            case "single":
-                MessageRelayServer server = clientMap.get(decodedMessage.getReceiver());
-                if (server != null) {
-                    //        if (!Objects.equals(this.id, decodedMessage.getSender())) {
-                    ////            return ResultVO.failed(StatusCode.S403_FORBIDDEN, "Can`t Send Message From Others By Yourself", null);
-                    //            log.error("Message Sender is invalid");
-                    //            return;
-                    //        }
-
-                    log.info("服务端尝试给客户端 #{} 发送消息：{}", id, rawMessage);
-                    send(server.session, decodedMessage);
-                } else {
-                    log.warn("Target is offline, message need to be store into databases");
-                    // TODO save to databases, waiting for the user online or cache to redis
-                }
-                try {
-                    WebsocketUtil.saveMessageToDatabase(decodedMessage);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case "group":
-                List<Session> group = groupMap.get(decodedMessage.getReceiver());
-                if (group != null) {
-                    send(group, rawMessage);
-                }
-                WebsocketUtil.saveMessageToDatabase(decodedMessage);
-                break;
-            default:
-                log.error("消息类型存在，但服务器暂时不能解析");
+        final int exitCode = WebsocketUtil.handlersMap
+            .getOrDefault(decodedMessage.getType(), WebsocketUtil.defaultHandler)
+            .handle(decodedMessage, this);
+        if (exitCode != 0) {
+            log.error("Something went wrong, EXIT CODE: {}", exitCode);
         }
     }
 }

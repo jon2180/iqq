@@ -58,7 +58,7 @@
                 #{link_time}, #{status_1}, #{status_2}, #{type}, #{extra})
     </insert>
 
-    <select id="findByFIDs" parameterType="java.lang.String" resultType="com.neutron.im.core.entity.Friend">
+    <select id="findOne" parameterType="java.lang.String" resultType="com.neutron.im.core.entity.Friend">
         select id,
                fid_1,
                cate_name_1,
@@ -74,5 +74,6 @@
         from neutron_im.friends
         where (fid_1 = #{myId, jdbcType=VARCHAR} and fid_2 = #{id, jdbcType=VARCHAR})
            or (fid_1 = #{id, jdbcType=VARCHAR} and fid_2 = #{myId, jdbcType=VARCHAR})
+        limit 1;
     </select>
 </mapper>
